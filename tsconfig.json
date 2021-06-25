@@ -1,0 +1,41 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "incremental": true,
+        "target": "es6",
+        "module": "commonjs",
+        "lib": [
+            "es2018"
+        ],
+        "allowJs": true,
+        "baseUrl": "./",
+        "checkJs": false,
+        "declaration": false,
+        "sourceMap": true,
+        "outDir": "./dist",
+        "strict": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": false, // true
+        "moduleResolution": "node",
+        "types": [],
+        "esModuleInterop": true,
+        "experimentalDecorators": true,
+        "resolveJsonModule": true,
+        "forceConsistentCasingInFileNames": true,
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        ".git",
+        ".idea",
+        ".DS_Store"
+    ],
+    "include": [
+        "src/**/*",
+        ".eslintrc.js"
+    ],
+    "files": [
+        "./index.d.ts"
+    ],
+}
