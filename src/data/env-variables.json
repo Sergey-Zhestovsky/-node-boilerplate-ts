@@ -1,0 +1,12 @@
+{
+  "list": [
+    "PORT",
+    "HOST",
+    "DB_URL",
+    "DB_NAME",
+    "SWAGGER",
+    "SWAGGER_SERVER_URL",
+    "ASYNCAPI",
+    "ASYNCAPI_PUBLIC_URL"
+  ]
+}

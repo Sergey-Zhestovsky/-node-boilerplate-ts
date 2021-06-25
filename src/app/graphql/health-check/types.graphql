@@ -1,0 +1,14 @@
+type HealthCheck {
+  status: String!
+  started: Boolean!
+  environment: Dictionary
+}
+
+input HealthCheckInput {
+  withEnv: Boolean
+}
+
+type Query {
+  ping: String!
+  healthCheck(input: HealthCheckInput = {}): HealthCheck!
+}

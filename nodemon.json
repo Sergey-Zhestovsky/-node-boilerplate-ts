@@ -1,0 +1,8 @@
+{
+  "delay": 1000,
+  "ext": "js,gql,graphql,json",
+  "ignore": [
+    "*.test.js",
+    "temp/*"
+  ]
+}

@@ -1,0 +1,11 @@
+openapi: '3.0.2'
+
+info:
+  title: 'Boilerplate API'
+  version: '1.0.0'
+
+servers:
+
+components:
+  schemas:
+  securitySchemes:

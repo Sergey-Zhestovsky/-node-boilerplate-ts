@@ -1,0 +1,16 @@
+asyncapi: 2.0.0
+
+info:
+  title: Boilerplate Websockets API
+  version: '1.0.0'
+  description: |
+    WebSockets API based on AsyncAPI specification
+
+    More on that [AsyncAPI](https://www.asyncapi.com/)
+
+servers:
+  public:
+    url: {{ASYNCAPI_PUBLIC_URL}}
+    protocol: ws
+    description: |
+      Socket.io connection
