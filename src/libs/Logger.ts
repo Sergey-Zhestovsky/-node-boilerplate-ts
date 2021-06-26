@@ -1,12 +1,23 @@
-require('colors');
+import 'colors';
 
-const path = require('path');
-const debug = require('debug');
-const winston = require('winston');
-const moment = require('moment');
-const DailyRotateFile = require('winston-daily-rotate-file');
+import path from 'path';
+import debug from 'debug';
+import winston, { Logform } from 'winston';
+import moment, { Moment } from 'moment';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
-const loggerConfig = require('../config/logger.config');
+import loggerConfig from '../config/logger.config';
+
+export interface ILoggerInfo extends Logform.TransformableInfo {
+  code?: string;
+  stack?: string;
+  timestamp: string;
+}
+
+export type TFileTransportConfig = Omit<
+  DailyRotateFile.GeneralDailyRotateFileTransportOptions,
+  'stream'
+>;
 
 class Logger {
   static get Info() {
@@ -16,7 +27,11 @@ class Logger {
     };
   }
 
-  static assembleLogOutput(info, parseArgs = true, getTime = (timestamp) => timestamp) {
+  static assembleLogOutput(
+    info: ILoggerInfo,
+    parseArgs = true,
+    getTime = (timestamp: string, logInfo: ILoggerInfo): string => timestamp
+  ) {
     const { timestamp, level, message, code, stack, ...args } = info;
     const ts = getTime(timestamp, info);
     let output = message;
@@ -29,50 +44,60 @@ class Logger {
   }
 
   static getFormat(parseArgs = true) {
-    const timeFormatter = (timestamp) => {
+    const timeFormatter = (timestamp: string | Date | Moment) => {
       return moment(timestamp).format('YYYY-MM-DD HH:mm:ss (Z)');
     };
 
-    const printf = (info) => {
-      const content = info[Logger.Info.message] ? info[Logger.Info.message] : info;
+    const printf = (info: Logform.TransformableInfo) => {
+      const content = info[Logger.Info.message as unknown as string]
+        ? info[Logger.Info.message as unknown as string]
+        : info;
+
       return Logger.assembleLogOutput(content, parseArgs, timeFormatter);
     };
 
     return winston.format.combine(winston.format.timestamp(), winston.format.printf(printf));
   }
 
-  static getFileTransport(logPath, level, config = loggerConfig.fileTransport) {
+  static getFileTransport(
+    logPath: string,
+    level: string,
+    config: TFileTransportConfig = loggerConfig.fileTransport
+  ) {
     return new DailyRotateFile({
-      filename: path.join(logPath, level, `${level}-%DATE%.log`),
-      level,
+      level: level,
       format: Logger.getFormat(),
       ...config,
+      filename: path.join(logPath, level, `${level}-%DATE%.log`),
     });
   }
 
-  static getDebugTransport(logPath) {
+  static getDebugTransport(logPath: string) {
     return Logger.getFileTransport(logPath, 'debug');
   }
 
-  static getInfoTransport(logPath) {
+  static getInfoTransport(logPath: string) {
     return Logger.getFileTransport(logPath, 'info');
   }
 
-  static getWarnTransport(logPath) {
+  static getWarnTransport(logPath: string) {
     return Logger.getFileTransport(logPath, 'warn');
   }
 
-  static getErrorTransport(logPath) {
+  static getErrorTransport(logPath: string) {
     return Logger.getFileTransport(logPath, 'error');
   }
 
   static getConsoleTransport(parseArgs = true) {
-    const timeFormatter = (timestamp) => {
+    const timeFormatter = (timestamp: string | Date | Moment) => {
       return moment(timestamp).format('MM.DD.YYYY, HH:mm:ss').cyan;
     };
 
-    const printf = (info) => {
-      const content = info[Logger.Info.message] ? info[Logger.Info.message] : info;
+    const printf = (info: Logform.TransformableInfo) => {
+      const content = info[Logger.Info.message as unknown as string]
+        ? info[Logger.Info.message as unknown as string]
+        : info;
+
       return Logger.assembleLogOutput(content, parseArgs, timeFormatter);
     };
 
@@ -84,7 +109,7 @@ class Logger {
     });
   }
 
-  static buildLogger({ logPath, parseArgs = true, logInConsole = true } = {}) {
+  static buildLogger(logPath: string, logInConsole = true) {
     const transports = [];
 
     if (logPath) {
@@ -99,13 +124,16 @@ class Logger {
     }
 
     return winston.createLogger({
-      format: winston.format.printf((info) => info),
+      format: winston.format.printf((info) => info as unknown as string),
       transports,
     });
   }
 
+  private readonly winston: winston.Logger;
+  private readonly debug: debug.Debugger;
+
   constructor(logPath = loggerConfig.logPath) {
-    this.winston = Logger.buildLogger({ logPath });
+    this.winston = Logger.buildLogger(logPath);
     this.debug = debug('app');
   }
 
@@ -113,33 +141,33 @@ class Logger {
     return 'PATH::url [:method] :: status::status :: size::res[content-length] :: :response-time ms';
   }
 
-  getDebug(namespace) {
+  getDebug(namespace: string) {
     return this.debug.extend(namespace);
   }
 
   stream() {
     return {
-      write: (message, encoding) => {
+      write: (message: string, encoding?: string) => {
         this.info(message.replace(/\n/g, ''));
       },
     };
   }
 
-  log(level, message, ...args) {
+  log(level: string, message: string, ...args: any[]) {
     this.winston.log(level, message, ...args);
   }
 
-  error(message, ...args) {
+  error(message: string, ...args: any[]) {
     this.winston.error(message, ...args);
   }
 
-  warn(message, ...args) {
+  warn(message: string, ...args: any[]) {
     this.winston.warn(message, ...args);
   }
 
-  info(message, ...args) {
+  info(message: string, ...args: any[]) {
     this.winston.info(message, ...args);
   }
 }
 
-module.exports = new Logger();
+export default new Logger();

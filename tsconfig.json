@@ -2,10 +2,10 @@
     "compileOnSave": true,
     "compilerOptions": {
         "incremental": true,
-        "target": "es6",
+        "target": "ES2018",
         "module": "commonjs",
         "lib": [
-            "es2018"
+            "ES2020"
         ],
         "allowJs": true,
         "baseUrl": "./",
@@ -18,7 +18,9 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": false, // true
         "moduleResolution": "node",
-        "types": [],
+        "types": [
+            "jest"
+        ],
         "esModuleInterop": true,
         "experimentalDecorators": true,
         "resolveJsonModule": true,
@@ -32,10 +34,10 @@
         ".DS_Store"
     ],
     "include": [
-        "src/**/*",
-        ".eslintrc.js"
+        "src/**/*"
     ],
     "files": [
-        "./index.d.ts"
+        "src/types/index.d.ts",
+        "src/types/some.d.ts"
     ],
 }

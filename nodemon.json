@@ -1,8 +1,13 @@
 {
   "delay": 1000,
-  "ext": "js,gql,graphql,json",
+  "ext": "js,ts,gql,graphql,json",
   "ignore": [
     "*.test.js",
+    "*.spec.js",
+    "*.test.ts",
+    "*.spec.ts",
+    "src/tests/*",
     "temp/*"
-  ]
+  ],
+  "exec": "ts-node ./src/server.ts"
 }

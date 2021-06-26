@@ -1,6 +1,6 @@
-const logger = require('../libs/Logger');
+import logger from '../libs/Logger';
 
-const errorHandler = (error) => {
+const errorHandler = (error: Error) => {
   logger.error(`Uncaught Error: '${error.message}'`, error);
   process.exit(1);
 };

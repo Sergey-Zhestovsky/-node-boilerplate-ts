@@ -1,17 +1,29 @@
-const Joi = require('joi');
+import Joi, { Root, ValidationOptions, SchemaMap } from 'joi';
 
-const validationErrorMessages = require('../data/validation-errors.json');
+import validationErrorMessages from '../data/validation-errors.json';
+
+export interface IValidatorConfig extends ValidationOptions {
+  required?: boolean;
+}
+
+export type TSchemaContainer = ((joi: Root) => SchemaMap | string[]) | string[];
+
+export interface IValidationResult<T = unknown> {
+  value: T;
+  errors: Record<string, string> | null;
+  errorMessage: string | null;
+}
 
 class Validator {
+  private schema: Joi.ObjectSchema | null;
+  private config: ValidationOptions;
+
   constructor() {
     this.schema = null;
     this.config = this.getDefaultConfig();
   }
 
-  /**
-   * @returns {Joi.ValidationOptions}
-   */
-  getDefaultConfig() {
+  getDefaultConfig(): ValidationOptions {
     return {
       abortEarly: false,
       convert: true,
@@ -20,13 +32,10 @@ class Validator {
     };
   }
 
-  /**
-   * @param {Joi.ValidationOptions} config
-   */
-  setConfig(config) {
+  setConfig(config: IValidatorConfig) {
     const { required = true, messages = {}, errors = {}, ...rest } = config;
 
-    const validatorConfig = {
+    const validatorConfig: ValidationOptions = {
       presence: required ? 'required' : 'optional',
       messages: { ...validationErrorMessages, ...messages },
       errors: {
@@ -39,14 +48,10 @@ class Validator {
     this.config = { ...this.config, ...validatorConfig };
   }
 
-  /**
-   * @param {(joi: Joi) => Joi.SchemaMap | string[]} schema
-   * @param {Joi.ValidationOptions} validationConfig
-   */
-  setSchema(schema, config = this.getDefaultConfig()) {
+  setSchema(schema: TSchemaContainer, config: IValidatorConfig = this.getDefaultConfig()) {
     this.setConfig(config);
 
-    let retrievedSchema = null;
+    let retrievedSchema: string[] | Joi.SchemaMap;
 
     if (schema instanceof Function) {
       retrievedSchema = schema(Joi);
@@ -55,7 +60,7 @@ class Validator {
     }
 
     if (Array.isArray(retrievedSchema)) {
-      const validationSchema = {};
+      const validationSchema: Joi.SchemaMap = {};
       retrievedSchema.forEach((setting) => (validationSchema[setting] = Joi.any()));
       this.schema = Joi.object(validationSchema);
     } else if (typeof retrievedSchema === 'object') {
@@ -65,20 +70,22 @@ class Validator {
     return this;
   }
 
-  validate(data) {
-    let result = null;
-    let errors = null;
-    let errorMessage = null;
+  validate<T>(data: unknown): IValidationResult<T> | null {
+    if (!this.schema) return null;
 
-    if (this.schema) {
-      result = this.schema.validate(data, this.config);
-    }
+    const result = this.schema.validate(data, this.config);
+    let errors: Record<string, string> | null = null;
+    let errorMessage: string | null = null;
 
     if (result.error) {
       errors = {};
+
       errorMessage = result.error.details
         .map((detail) => {
-          errors[detail.context.key] = detail.message;
+          if (detail.context?.key && errors) {
+            errors[detail.context.key] = detail.message;
+          }
+
           return detail.message;
         })
         .join(' | ');
@@ -92,4 +99,4 @@ class Validator {
   }
 }
 
-module.exports = Validator;
+export default Validator;

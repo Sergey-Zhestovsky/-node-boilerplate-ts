@@ -15,8 +15,9 @@ module.exports = {
   },
 
   extends: [
+    'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:node/recommended',
+    'plugin:node/recommended-module',
     'prettier',
     'plugin:jest/recommended',
   ],
@@ -28,6 +29,12 @@ module.exports = {
     project: ['./tsconfig.json'],
     ecmaVersion: 2020,
     sourceType: 'module',
+  },
+
+  settings: {
+    node: {
+      tryExtensions: ['.js', '.json', '.node', '.ts', '.d.ts'],
+    },
   },
 
   rules: {
@@ -72,9 +79,9 @@ module.exports = {
     'jsdoc/no-undefined-types': WARN,
     'key-spacing': OFF,
     'keyword-spacing': [ERROR, { after: true, before: true }],
-    'linebreak-style': ERROR,
+    'linebreak-style': OFF,
     'lines-around-comment': OFF, // [ERROR, { allowBlockEnd: false, allowObjectEnd: false, allowArrayEnd: false, allowClassEnd: false }]
-    'lines-between-class-members': ERROR,
+    'lines-between-class-members': OFF,
     'max-classes-per-file': OFF, // [ERROR, 1]
     'max-len': OFF,
     'max-params': [ERROR, 10],
@@ -99,7 +106,7 @@ module.exports = {
     'no-extra-bind': ERROR,
     'no-extra-label': ERROR,
     'no-extra-parens': OFF,
-    'no-extra-semi': ERROR,
+    'no-extra-semi': OFF,
     'no-fallthrough': ERROR,
     'no-floating-decimal': ERROR,
     'no-implied-eval': ERROR,
@@ -141,9 +148,9 @@ module.exports = {
     'no-underscore-dangle': ERROR,
     'no-unmodified-loop-condition': ERROR,
     'no-unneeded-ternary': ERROR,
-    'no-unused-expressions': ERROR,
-    'no-unused-vars': [ERROR, { args: 'none' }],
-    'no-use-before-define': ERROR,
+    'no-unused-expressions': OFF,
+    'no-unused-vars': OFF,
+    'no-use-before-define': OFF,
     'no-useless-call': ERROR,
     'no-useless-computed-key': ERROR,
     'no-useless-concat': ERROR,
@@ -174,10 +181,10 @@ module.exports = {
     'prefer-spread': ERROR,
     'prefer-template': ERROR,
     'quote-props': [ERROR, 'consistent'],
-    'quotes': [WARN, 'single', { avoidEscape: true, allowTemplateLiterals: true }],
+    'quotes': OFF,
     'require-await': OFF,
     'rest-spread-spacing': ERROR,
-    'semi': ERROR,
+    'semi': OFF,
     'semi-spacing': ERROR,
     'semi-style': ERROR,
     'space-before-blocks': ERROR,
@@ -192,9 +199,9 @@ module.exports = {
     'yoda': ERROR,
 
     '@typescript-eslint/adjacent-overload-signatures': ERROR,
-    '@typescript-eslint/array-type': [ERROR, { default: 'generic' }],
+    '@typescript-eslint/array-type': [ERROR, { default: 'array-simple' }],
     '@typescript-eslint/await-thenable': ERROR,
-    '@typescript-eslint/ban-ts-comment': WARN,
+    '@typescript-eslint/ban-ts-comment': [ERROR, { 'ts-ignore': 'allow-with-description' }],
     '@typescript-eslint/ban-ts-ignore': OFF,
     '@typescript-eslint/ban-types': [
       'error',
@@ -227,7 +234,7 @@ module.exports = {
     '@typescript-eslint/explicit-member-accessibility': [ERROR, { accessibility: 'no-public' }],
     '@typescript-eslint/explicit-module-boundary-types': OFF,
     '@typescript-eslint/func-call-spacing': [ERROR, 'never'],
-    '@typescript-eslint/indent': [ERROR, 2],
+    '@typescript-eslint/indent': OFF, // [ERROR, 2]
     '@typescript-eslint/member-delimiter-style': ERROR,
     '@typescript-eslint/member-naming': OFF,
     '@typescript-eslint/member-ordering': [
@@ -254,10 +261,6 @@ module.exports = {
     '@typescript-eslint/naming-convention': [
       ERROR,
       {
-        selector: 'default',
-        format: ['camelCase'],
-      },
-      {
         selector: 'interface',
         format: ['PascalCase'],
         prefix: ['I'],
@@ -274,16 +277,8 @@ module.exports = {
       },
       {
         selector: 'variable',
-        format: ['camelCase', 'UPPER_CASE'],
-      },
-      {
-        selector: 'variable',
         types: ['function'],
         format: ['camelCase'],
-      },
-      {
-        selector: 'objectLiteralProperty',
-        format: ['PascalCase', 'camelCase', 'snake_case', 'UPPER_CASE'],
       },
       {
         selector: 'class',
@@ -291,11 +286,11 @@ module.exports = {
       },
       {
         selector: 'parameter',
-        format: ['camelCase'],
+        format: ['camelCase', 'PascalCase'],
       },
       {
         selector: 'method',
-        format: ['camelCase'],
+        format: ['camelCase', 'PascalCase'],
       },
       {
         selector: 'enumMember',
@@ -308,7 +303,7 @@ module.exports = {
     '@typescript-eslint/no-dynamic-delete': ERROR,
     '@typescript-eslint/no-empty-function': WARN,
     '@typescript-eslint/no-empty-interface': [ERROR, { allowSingleExtends: true }],
-    '@typescript-eslint/no-explicit-any': ERROR,
+    '@typescript-eslint/no-explicit-any': [ERROR, { ignoreRestArgs: true }],
     '@typescript-eslint/no-extra-non-null-assertion': ERROR,
     '@typescript-eslint/no-extra-parens': OFF,
     '@typescript-eslint/no-extra-semi': ERROR,
@@ -316,9 +311,10 @@ module.exports = {
     '@typescript-eslint/no-floating-promises': [ERROR, { ignoreVoid: true, ignoreIIFE: true }],
     '@typescript-eslint/no-for-in-array': ERROR,
     '@typescript-eslint/no-inferrable-types': OFF,
+    '@typescript-eslint/lines-between-class-members': [ERROR, { exceptAfterSingleLine: true }],
     '@typescript-eslint/no-misused-new': ERROR,
     '@typescript-eslint/no-misused-promises': [
-      'error',
+      ERROR,
       { checksConditionals: false, checksVoidReturn: false },
     ],
     '@typescript-eslint/no-namespace': ERROR,
@@ -329,54 +325,51 @@ module.exports = {
     '@typescript-eslint/no-this-alias': ERROR,
     '@typescript-eslint/no-throw-literal': ERROR,
     '@typescript-eslint/no-type-alias': OFF,
-    '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'error',
-    '@typescript-eslint/no-unnecessary-qualifier': 'error',
-    '@typescript-eslint/no-unnecessary-type-arguments': 'error',
-    '@typescript-eslint/no-unnecessary-type-assertion': 'error',
-    '@typescript-eslint/no-unsafe-call': 'off',
-    '@typescript-eslint/no-unsafe-member-access': 'off',
-    '@typescript-eslint/no-unsafe-return': 'off',
-    '@typescript-eslint/no-untyped-public-signature': 'off',
-    '@typescript-eslint/no-unused-vars-experimental': [
-      'error',
-      {
-        ignoreArgsIfArgsAfterAreUsed: true,
-      },
-    ],
+    '@typescript-eslint/no-unnecessary-boolean-literal-compare': ERROR,
+    '@typescript-eslint/no-unnecessary-qualifier': ERROR,
+    '@typescript-eslint/no-unnecessary-type-arguments': OFF,
+    '@typescript-eslint/no-unnecessary-type-assertion': ERROR,
+    '@typescript-eslint/no-unsafe-call': ERROR,
+    '@typescript-eslint/no-unsafe-member-access': ERROR,
+    '@typescript-eslint/no-unsafe-return': ERROR,
+    '@typescript-eslint/no-untyped-public-signature': OFF,
+    '@typescript-eslint/no-unused-vars-experimental': OFF,
     '@typescript-eslint/no-unused-expressions': [
-      'error',
+      ERROR,
       {
         allowShortCircuit: true,
+        allowTernary: true,
+        allowTaggedTemplates: true,
       },
     ],
-    '@typescript-eslint/no-unused-vars': 'off',
-    '@typescript-eslint/no-use-before-define': 'error',
-    '@typescript-eslint/no-useless-constructor': 'error',
-    '@typescript-eslint/no-var-requires': 'error',
-    '@typescript-eslint/prefer-as-const': 'error',
-    '@typescript-eslint/prefer-for-of': 'error',
-    '@typescript-eslint/prefer-function-type': 'error',
-    '@typescript-eslint/prefer-includes': 'error',
-    '@typescript-eslint/prefer-namespace-keyword': 'error',
-    '@typescript-eslint/prefer-optional-chain': 'error',
-    '@typescript-eslint/prefer-readonly-parameter-types': 'off',
-    '@typescript-eslint/prefer-readonly': 'off',
-    '@typescript-eslint/prefer-regexp-exec': 'error',
-    '@typescript-eslint/prefer-string-starts-ends-with': 'error',
-    '@typescript-eslint/promise-function-async': 'off',
-    '@typescript-eslint/require-array-sort-compare': 'error',
-    '@typescript-eslint/require-await': 'off',
-    '@typescript-eslint/restrict-plus-operands': 'error',
-    '@typescript-eslint/semi': ['error', 'always'],
-    '@typescript-eslint/strict-boolean-expressions': 'off',
-    '@typescript-eslint/switch-exhaustiveness-check': 'error',
-    '@typescript-eslint/unified-signatures': 'error',
-    '@typescript-eslint/triple-slash-reference': 'error',
-    '@typescript-eslint/type-annotation-spacing': 'error',
-    '@typescript-eslint/typedef': 'off',
-    '@typescript-eslint/unbound-method': 'off',
+    '@typescript-eslint/no-unused-vars': OFF, // [ERROR, { args: 'none' }]
+    '@typescript-eslint/no-use-before-define': ERROR,
+    '@typescript-eslint/no-useless-constructor': OFF,
+    '@typescript-eslint/no-var-requires': ERROR,
+    '@typescript-eslint/prefer-as-const': ERROR,
+    '@typescript-eslint/prefer-for-of': ERROR,
+    '@typescript-eslint/prefer-function-type': ERROR,
+    '@typescript-eslint/prefer-includes': ERROR,
+    '@typescript-eslint/prefer-namespace-keyword': ERROR,
+    '@typescript-eslint/prefer-optional-chain': ERROR,
+    '@typescript-eslint/prefer-readonly-parameter-types': OFF,
+    '@typescript-eslint/prefer-readonly': WARN,
+    '@typescript-eslint/prefer-regexp-exec': OFF,
+    '@typescript-eslint/prefer-string-starts-ends-with': ERROR,
+    '@typescript-eslint/promise-function-async': ERROR,
+    '@typescript-eslint/require-array-sort-compare': ERROR,
+    '@typescript-eslint/require-await': OFF,
+    '@typescript-eslint/restrict-plus-operands': ERROR,
+    '@typescript-eslint/semi': ERROR,
+    '@typescript-eslint/strict-boolean-expressions': OFF, // [ERROR, {   allowNullableString: true, allowNullableNumber: true }]
+    '@typescript-eslint/switch-exhaustiveness-check': ERROR,
+    '@typescript-eslint/unified-signatures': ERROR,
+    '@typescript-eslint/triple-slash-reference': ERROR,
+    '@typescript-eslint/type-annotation-spacing': ERROR,
+    '@typescript-eslint/typedef': OFF,
+    '@typescript-eslint/unbound-method': OFF,
     '@typescript-eslint/space-before-function-paren': [
-      'error',
+      ERROR,
       {
         anonymous: 'never',
         named: 'never',
@@ -384,7 +377,7 @@ module.exports = {
       },
     ],
     '@typescript-eslint/restrict-template-expressions': [
-      'off',
+      ERROR,
       {
         allowNumber: true,
         allowBoolean: true,
@@ -393,33 +386,36 @@ module.exports = {
       },
     ],
     '@typescript-eslint/quotes': [
-      'error',
+      WARN,
       'single',
-      {
-        avoidEscape: true,
-      },
+      { avoidEscape: true, allowTemplateLiterals: true },
     ],
     '@typescript-eslint/prefer-nullish-coalescing': [
-      'off',
+      ERROR,
       {
         ignoreMixedLogicalExpressions: true,
         ignoreConditionalTests: true,
       },
     ],
-    '@typescript-eslint/no-unnecessary-condition': [
-      'off',
-      {
-        ignoreRhs: true,
-      },
-    ],
+    '@typescript-eslint/no-unnecessary-condition': [ERROR, { allowConstantLoopConditions: true }],
   },
 
   overrides: [
     {
-      files: ['**/*.test.js', 'src/scripts/*'],
+      files: ['**/*.test.js', 'src/scripts/*', '**/*.test.ts'],
       rules: {
         'node/no-unpublished-require': OFF,
         'node/no-missing-require': OFF,
+        '@typescript-eslint/no-non-null-assertion': OFF,
+        '@typescript-eslint/no-explicit-any': OFF,
+      },
+    },
+    {
+      files: ['**/*.js'],
+      extends: ['plugin:node/recommended-script'],
+      rules: {
+        '@typescript-eslint/no-var-requires': OFF,
+        '@typescript-eslint/no-require-imports': OFF,
       },
     },
   ],

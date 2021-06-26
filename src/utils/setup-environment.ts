@@ -1,22 +1,32 @@
 /* eslint-disable no-console */
 /* eslint-disable no-param-reassign */
 
-require('colors');
+import 'colors';
 
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 
-const { list: envVariables } = require('../data/env-variables.json');
-const env = require('../data/env.json');
+import { list as envVariables } from '../data/env-variables.json';
+import env from '../data/env.json';
 
-const validateVariables = (configPath) => {
+const validateVariables = (configPath?: string): boolean => {
   if (configPath === undefined) {
-    if (process.env.NODE_ENV === undefined || process.env.NODE_ENV === null) {
-      process.env.NODE_ENV = env.DEVELOPMENT;
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    process.env.NODE_ENV ?? (process.env.NODE_ENV = env.DEVELOPMENT);
 
-    if (process.env.NODE_ENV === env.DEVELOPMENT) configPath = `.env.development`;
-    if (process.env.NODE_ENV === env.PRODUCTION) configPath = `.env.production`;
-    if (process.env.NODE_ENV === env.TEST) configPath = `.env.test`;
+    switch (process.env.NODE_ENV) {
+      case env.PRODUCTION:
+        configPath = `.env.production`;
+        break;
+
+      case env.TEST:
+        configPath = `.env.test`;
+        break;
+
+      case env.DEVELOPMENT:
+      default:
+        configPath = `.env.development`;
+        break;
+    }
   }
 
   dotenv.config({ path: `${configPath}.local` });
@@ -24,8 +34,8 @@ const validateVariables = (configPath) => {
   dotenv.config({ path: '.env.local' });
   dotenv.config({ path: '.env' });
 
-  const allVariables = {};
-  const missedVariables = [];
+  const allVariables: Record<string, string> = {};
+  const missedVariables: string[] = [];
 
   for (const variable of envVariables) {
     const pVariable = process.env[variable];
@@ -48,4 +58,4 @@ const validateVariables = (configPath) => {
   throw new Error(errorMessage);
 };
 
-module.exports = validateVariables;
+export default validateVariables;
