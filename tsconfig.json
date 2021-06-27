@@ -34,10 +34,9 @@
         ".DS_Store"
     ],
     "include": [
-        "src/**/*"
+        "src/**/*",
     ],
     "files": [
         "src/types/index.d.ts",
-        "src/types/some.d.ts"
     ],
 }

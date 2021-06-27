@@ -2,7 +2,7 @@ import 'express-async-errors';
 
 import express from 'express';
 
-// const { routes, swagger, asyncapi } = require('./app');
+import { routes, swagger, asyncapi } from './app';
 // const { middleware: gqlMiddleware } = require('./apollo-server');
 // const {
 //   entry,
