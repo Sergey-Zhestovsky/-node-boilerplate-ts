@@ -44,7 +44,9 @@ class ServerError extends ClientError {
     if (this.correlationId !== null) return;
     this.correlationId = uuid();
     // TODO: create record in db.error table with error object and id as `correlationId`
+    // try
     // await db.actions.error.add({ id: this.correlationId, ...this.getError(false) });
+    // catch
   }
 
   removeStack() {
@@ -63,4 +65,4 @@ class ServerError extends ClientError {
   }
 }
 
-module.exports = ServerError;
+export default ServerError;

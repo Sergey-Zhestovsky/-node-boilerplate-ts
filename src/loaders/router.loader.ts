@@ -1,7 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+/* eslint-disable @typescript-eslint/no-require-imports */
 
-const logger = require('../libs/Logger');
+import { Router } from 'express';
+import fs from 'fs';
+import path from 'path';
+
+import logger from '../libs/Logger';
 
 const DEFAULT_CONFIG = {
   /** relative folder path to file */
@@ -12,13 +15,13 @@ const DEFAULT_CONFIG = {
 
 const routesAssembler = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   const root = fs.readdirSync(path.resolve(relativePath, config.pathPattern));
-  const result = [];
+  const result: Router[] = [];
 
   root.forEach((rootFolder) => {
     const relPath = path.join(config.pathPattern, rootFolder);
 
     try {
-      result.push(require(path.resolve(relativePath, relPath, config.fileName)));
+      result.push(require(path.resolve(relativePath, relPath, config.fileName)) as Router);
     } catch (e) {
       logger.warn(`Cant find '${config.fileName}' file in '${relPath}'`);
     }
@@ -27,4 +30,4 @@ const routesAssembler = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   return result;
 };
 
-module.exports = routesAssembler;
+export default routesAssembler;

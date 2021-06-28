@@ -336,6 +336,7 @@ module.exports = {
           {
             selector: 'parameter',
             format: ['camelCase', 'PascalCase'],
+            filter: { regex: '^_+$', match: false },
           },
           {
             selector: 'method',
@@ -419,7 +420,7 @@ module.exports = {
             allowTaggedTemplates: true,
           },
         ],
-        '@typescript-eslint/no-unused-vars': OFF,
+        '@typescript-eslint/no-unused-vars': [ERROR, { args: 'none' }],
         '@typescript-eslint/no-unused-vars-experimental': OFF,
         '@typescript-eslint/no-use-before-define': ERROR,
         '@typescript-eslint/no-useless-constructor': OFF,

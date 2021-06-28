@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
+
+type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 declare namespace NodeJS {
   interface ProcessEnv {
@@ -17,4 +20,12 @@ declare namespace Express {
   }
 }
 
-type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+type ExpressRequest<ReqBody = any, ReqQuery = any, ResBody = any> = import('express').Request<
+  import('express-serve-static-core').ParamsDictionary,
+  ResBody,
+  ReqBody,
+  ReqQuery
+>;
+
+type ExpressQueryRequest<ReqQuery = any, ResBody = any> = ExpressRequest<any, ReqQuery, ResBody>;
+type ExpressBodyRequest<ReqBody = any, ResBody = any> = ExpressRequest<ReqBody, any, ResBody>;

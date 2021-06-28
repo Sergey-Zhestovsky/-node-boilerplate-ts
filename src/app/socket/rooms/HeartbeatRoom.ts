@@ -1,5 +1,5 @@
-const Room = require('../../utils/socket/Room');
-const HeartbeatEvent = require('../events/HeartbeatEvent');
+import Room from '../../utils/socket/Room';
+import HeartbeatEvent from '../events/HeartbeatEvent';
 
 class HeartbeatRoom extends Room {
   getName() {
@@ -13,4 +13,4 @@ class HeartbeatRoom extends Room {
   }
 }
 
-module.exports = HeartbeatRoom;
+export default HeartbeatRoom;

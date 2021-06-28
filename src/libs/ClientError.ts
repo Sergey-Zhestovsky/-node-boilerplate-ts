@@ -16,6 +16,10 @@ interface IClientErrorDataModel {
   message: string;
 }
 
+interface IClientErrorConstructorModel extends Partial<IClientErrorDataModel> {
+  description?: object | string;
+}
+
 type TClientErrorVariant = ClientError | Error | Record<string, string> | string;
 
 export class ClientError extends Error {
@@ -34,8 +38,8 @@ export class ClientError extends Error {
   }
 
   static construct(
-    originErrorObject: IClientErrorDataModel,
-    override?: IClientErrorDataModel | string
+    originErrorObject: IClientErrorConstructorModel,
+    override?: IClientErrorConstructorModel | string
   ) {
     let origin = { ...originErrorObject };
     if (typeof override === 'object') origin = { ...origin, ...override };
@@ -47,12 +51,12 @@ export class ClientError extends Error {
     return clientErrors;
   }
 
-  private readonly code: string;
-  private readonly type: string;
-  private readonly status: number;
-  private readonly userMessage: string | null;
-  private readonly description: unknown | null;
-  private readonly date: string;
+  public readonly code: string;
+  public readonly type: string;
+  public readonly status: number;
+  public readonly userMessage: string | null;
+  public readonly description: unknown | null;
+  public readonly date: string;
 
   constructor({ code, type, status, message, description }: IClientErrorConstructor) {
     super(message);
@@ -82,31 +86,31 @@ export class ClientError extends Error {
 }
 
 export class Client400Error extends ClientError {
-  constructor(message: IClientErrorDataModel | string) {
+  constructor(message?: IClientErrorConstructorModel | string) {
     super(ClientError.construct(ClientError.Errors.ValidationError, message));
   }
 }
 
 export class Client401Error extends ClientError {
-  constructor(message: IClientErrorDataModel | string) {
+  constructor(message?: IClientErrorConstructorModel | string) {
     super(ClientError.construct(ClientError.Errors.AuthorizationError, message));
   }
 }
 
 export class Client403Error extends ClientError {
-  constructor(message: IClientErrorDataModel | string) {
+  constructor(message?: IClientErrorConstructorModel | string) {
     super(ClientError.construct(ClientError.Errors.PrivilegeError, message));
   }
 }
 
 export class Client404Error extends ClientError {
-  constructor(message: IClientErrorDataModel | string) {
+  constructor(message?: IClientErrorConstructorModel | string) {
     super(ClientError.construct(ClientError.Errors.NotFound, message));
   }
 }
 
 export class Client500Error extends ClientError {
-  constructor(message: IClientErrorDataModel | string) {
+  constructor(message?: IClientErrorConstructorModel | string) {
     super(ClientError.construct(ClientError.Errors.InternalServerError, message));
   }
 }

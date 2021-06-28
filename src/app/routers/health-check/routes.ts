@@ -18,4 +18,4 @@ router.get('/ping', validateQuery(PingDto), (async ({ query }, res) => {
   return res.status(200).return(result);
 }) as RequestHandler<unknown, unknown, unknown, PingDto>);
 
-module.exports = expressRouter().use('/health-check', router);
+export default expressRouter().use('/health-check', router);

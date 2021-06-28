@@ -1,9 +1,10 @@
-const { ApolloServer } = require('apollo-server-express');
+import { ApolloServer } from 'apollo-server-express';
 
-const { graphql } = require('./app');
-const corsConfig = require('./config/cors.config');
+import { graphql } from './app';
+import corsConfig from './config/cors.config';
 
 const { loaders, ...serverConfig } = graphql;
+
 const server = new ApolloServer({
   ...serverConfig,
   context: async ({ req, res }) => {
@@ -23,4 +24,4 @@ const middleware = server.getMiddleware({
   cors: corsConfig.withCors ? corsConfig.config : false,
 });
 
-module.exports = { server, middleware };
+export { server, middleware };

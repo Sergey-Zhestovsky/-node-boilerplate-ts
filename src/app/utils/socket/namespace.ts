@@ -2,4 +2,4 @@ class Namespace {
   constructor() {}
 }
 
-module.exports = Namespace;
+export default Namespace;

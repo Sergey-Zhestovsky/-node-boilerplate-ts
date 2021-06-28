@@ -6,7 +6,7 @@ export interface IValidatorConfig extends ValidationOptions {
   required?: boolean;
 }
 
-export type TSchemaContainer = ((joi: Root) => SchemaMap | string[]) | string[];
+export type TSchemaContainer = ((joi: Root) => SchemaMap | string[]) | SchemaMap | string[];
 
 export interface IValidationResult<T = unknown> {
   value: T;

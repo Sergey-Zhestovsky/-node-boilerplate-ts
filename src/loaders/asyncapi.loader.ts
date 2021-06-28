@@ -1,11 +1,37 @@
-const fs = require('fs');
-const path = require('path');
-const glob = require('glob');
-const yaml = require('js-yaml');
-const _ = require('lodash');
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-require-imports */
 
-const logger = require('../libs/Logger');
-const asyncapiConfig = require('../config/asyncapi/asyncapi.config');
+import fs from 'fs';
+import path from 'path';
+import glob from 'glob';
+import yaml from 'js-yaml';
+import _ from 'lodash';
+
+import logger from '../libs/Logger';
+import asyncapiConfig from '../config/asyncapi/asyncapi.config';
+
+interface IAsyncApiFileObject<T = object> {
+  tags?: unknown[];
+  components?: T;
+  channels?: object;
+}
+
+interface IAsyncApiObject
+  extends IAsyncApiFileObject<{
+    securitySchemes?: object;
+    schemas?: object;
+  }> {}
+
+export interface IPathContract {
+  path: string;
+}
+
+export interface IFileContract {
+  file: string;
+}
+
+export type TAsyncApiResponse = () => Promise<IPathContract | IFileContract | null>;
 
 const DEFAULT_CONFIG = {
   tempFileFolder: path.resolve(__dirname, '../../temp/temp-async-api'),
@@ -15,7 +41,7 @@ const DEFAULT_CONFIG = {
   inMemory: true,
 };
 
-const extractObjectFromFile = (pathToFile, preprocessor = (file) => file) => {
+const extractObjectFromFile = (pathToFile: string, preprocessor = (file: string) => file) => {
   const ext = path.extname(pathToFile);
 
   if (/y(a)?ml/.test(ext)) {
@@ -23,18 +49,18 @@ const extractObjectFromFile = (pathToFile, preprocessor = (file) => file) => {
       const rowFile = fs.readFileSync(pathToFile, 'utf8');
       const processedFile = preprocessor(rowFile);
       const doc = yaml.load(processedFile);
-      return doc;
+      return doc as object;
     } catch (e) {
       return {};
     }
   } else if (ext === 'json') {
-    return require(pathToFile);
+    return require(pathToFile) as object;
   }
 
   return {};
 };
 
-const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
+const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG): TAsyncApiResponse => {
   return async () => {
     // assemble asyncapi doc
     // get base file
@@ -47,8 +73,8 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     }
 
     const baseAsyncapiFile = extractObjectFromFile(existedAsyncapiBasePaths[0], (doc) => {
-      return doc.replace(/\{\{(.+?)\}\}/g, (origin, variable) => {
-        return asyncapiConfig.vars[variable] || origin;
+      return doc.replace(/\{\{(.+?)\}\}/g, (origin, variable: string) => {
+        return (asyncapiConfig.vars[variable] as string | undefined) ?? origin;
       });
     });
 
@@ -56,24 +82,28 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     const pathToAllAsyncapiFiles = path.resolve(relativePath, config.filePath, config.fileName);
     const foundAsyncapiFilePaths = glob.sync(pathToAllAsyncapiFiles);
     const foundAsyncapiFiles = foundAsyncapiFilePaths.map((aa) => {
-      const obj = extractObjectFromFile(aa);
+      const obj: IAsyncApiFileObject = extractObjectFromFile(aa);
       // only fields `tags`, `components`, `channels`
       return {
-        tags: obj.tags || [],
-        components: obj.components || {},
-        channels: obj.channels || {},
+        tags: obj.tags ?? [],
+        components: obj.components ?? {},
+        channels: obj.channels ?? {},
       };
     });
 
     // parse and concat file
-    const concatAsyncapiAPI = _.mergeWith({}, ...foundAsyncapiFiles, (objValue, srcValue) => {
-      if (objValue === null) return srcValue;
-      if (srcValue === null) return objValue;
-      return objValue;
-    });
+    const concatAsyncapiAPI = _.mergeWith(
+      {},
+      ...foundAsyncapiFiles,
+      (objValue: object | null, srcValue: object | null) => {
+        if (objValue === null) return srcValue;
+        if (srcValue === null) return objValue;
+        return objValue;
+      }
+    );
 
     // merge resulted asyncapi file
-    const resAsyncapi = _.merge({}, baseAsyncapiFile, concatAsyncapiAPI);
+    const resAsyncapi: IAsyncApiObject = _.merge({}, baseAsyncapiFile, concatAsyncapiAPI);
     if (!resAsyncapi.tags) resAsyncapi.tags = [];
     if (!resAsyncapi.channels) resAsyncapi.channels = {};
     if (!resAsyncapi.components) resAsyncapi.components = {};
@@ -84,7 +114,7 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     let validAsyncapi = null;
 
     try {
-      // optimization
+      // loading optimization
       const parser = require('@asyncapi/parser');
       validAsyncapi = await parser.parse(resAsyncapi);
     } catch (error) {
@@ -93,7 +123,7 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     }
 
     // create new static file, save it in memory
-    // optimization
+    // loading optimization
     const Generator = require('@asyncapi/generator');
     const generator = new Generator('@asyncapi/html-template', config.tempFileFolder, {
       entrypoint: 'index.html',
@@ -105,13 +135,14 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
 
     // add new styles
     const pathToAsyncapiResFile = path.join(config.tempFileFolder, 'index.html');
-    let asyncapiHTML = fs.readFileSync(pathToAsyncapiResFile);
+    let asyncapiHTML = fs.readFileSync(pathToAsyncapiResFile).toString();
 
-    asyncapiHTML = asyncapiHTML
-      .toString()
-      .replace(/( *)(<link href="css\/styles.min.css" rel="stylesheet">)/, (origin, shift) => {
+    asyncapiHTML = asyncapiHTML.replace(
+      /( *)(<link href="css\/styles.min.css" rel="stylesheet">)/,
+      (origin, shift) => {
         return `${origin}\n\n${shift}<style>\n${shift}  ${config.style}\n${shift}</style>\n`;
-      });
+      }
+    );
 
     if (config.inMemory) {
       fs.rmSync(config.tempFileFolder, { recursive: true, force: true });
@@ -123,4 +154,4 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   };
 };
 
-module.exports = asyncAPILoader;
+export default asyncAPILoader;
