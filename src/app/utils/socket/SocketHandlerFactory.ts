@@ -66,4 +66,4 @@ class SocketHandlerFactory {
   }
 }
 
-module.exports = SocketHandlerFactory;
+export default SocketHandlerFactory;

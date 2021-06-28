@@ -3,9 +3,9 @@ import './utils/setup-process';
 import http from 'http';
 
 import app from './express';
-// const { socket } = require('./app');
-// const db = require('./api/database');
-// const rbac = require('./api/rbac');
+import { socket } from './app';
+import db from './api/database';
+import rbac from './api/rbac';
 import logger from './libs/Logger';
 import setupEnvironment from './utils/setup-environment';
 
@@ -13,11 +13,11 @@ setupEnvironment();
 
 const main = async (process: NodeJS.Process) => {
   try {
-    // await db.connection.connect();
-    // await rbac.synchronize();
+    await db.connection.connect();
+    await rbac.synchronize();
 
     const server = http.createServer(app);
-    // socket(server);
+    socket(server);
 
     const port = Number(process.env.PORT) || 3000;
     const host = process.env.HOST ?? 'localhost';

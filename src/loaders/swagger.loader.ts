@@ -107,4 +107,4 @@ const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   };
 };
 
-module.exports = swaggerLoader;
+export default swaggerLoader;

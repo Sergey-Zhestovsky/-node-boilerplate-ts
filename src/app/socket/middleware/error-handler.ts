@@ -41,4 +41,4 @@ const basicHandler = (server: Server, socket: Socket) => {
   socket.on('error', (error: Error) => handleError(error, socket));
 };
 
-module.exports = [rejectHandler, basicHandler];
+export default [rejectHandler, basicHandler];

@@ -1,5 +1,3 @@
-import { Server } from 'socket.io';
-
 import SocketEvent from '../../utils/socket/SocketEvent';
 import HeartbeatRoom from '../rooms/HeartbeatRoom';
 

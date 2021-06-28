@@ -467,7 +467,7 @@ module.exports = {
         '@typescript-eslint/space-before-function-paren': [
           ERROR,
           {
-            anonymous: 'never',
+            anonymous: 'always',
             named: 'never',
             asyncArrow: 'always',
           },

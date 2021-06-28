@@ -23,4 +23,4 @@ class HeartbeatHandler extends SocketHandler {
   }
 }
 
-module.exports = HeartbeatHandler;
+export default HeartbeatHandler;

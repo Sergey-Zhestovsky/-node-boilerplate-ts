@@ -1,12 +1,22 @@
-require('colors');
+/* eslint-disable @typescript-eslint/no-require-imports */
 
-const fs = require('fs');
-const path = require('path');
-const glob = require('glob');
-const _ = require('lodash');
-const { buildSchema, validateSchema, GraphQLError } = require('graphql');
+import 'colors';
 
-const logger = require('../libs/Logger');
+import fs from 'fs';
+import path from 'path';
+import glob from 'glob';
+import _ from 'lodash';
+import { buildSchema, validateSchema, GraphQLError } from 'graphql';
+import { SchemaDirectiveVisitor, IResolvers } from 'graphql-tools';
+
+import logger from '../libs/Logger';
+
+interface IGqlResult {
+  typeDefs: string;
+  resolvers: IResolvers;
+  schemaDirectives: Record<string, typeof SchemaDirectiveVisitor>;
+  loaders: () => object;
+}
 
 const DEFAULT_CONFIG = {
   /** relative folder path to file */
@@ -28,14 +38,14 @@ const DEFAULT_CONFIG = {
   loadersFilePath: './utils/graphql/loaders/index.js',
 };
 
-const getGraphqlError = (error, filePath) => {
+const getGraphqlError = (error: GraphQLError, filePath?: string) => {
   let errorString = `Graphql: ${error.message}`;
   if (filePath) errorString += `\n    File: '${filePath.cyan}'.`;
   if (error.source) errorString += `\n    ${JSON.stringify(error.source.locationOffset)}`;
   return errorString;
 };
 
-const getGraphqlFile = (pathToFile) => {
+const getGraphqlFile = (pathToFile: string) => {
   let file;
 
   try {
@@ -46,10 +56,10 @@ const getGraphqlFile = (pathToFile) => {
     if (error instanceof GraphQLError) {
       logger.error(getGraphqlError(error, pathToFile));
       process.exit(1);
-    } else if (error.code === 'ENOENT') {
+    } else if ((error as Record<string, string>).code === 'ENOENT') {
       throw error;
     } else {
-      return file;
+      return null;
     }
   }
 };
@@ -60,8 +70,9 @@ const graphqlAssembler = (
   config = DEFAULT_CONFIG
 ) => {
   const root = fs.readdirSync(path.resolve(relativePath, config.pathPattern));
-  const result = {
-    typeDefs: [],
+  const typeDefsArr: string[] = [];
+  const result: IGqlResult = {
+    typeDefs: '',
     resolvers: {},
     schemaDirectives: {},
     loaders: loaders,
@@ -71,8 +82,8 @@ const graphqlAssembler = (
   root.forEach((rootFolder) => {
     const relPath = path.join(config.pathPattern, rootFolder);
     const basePath = path.resolve(relativePath, relPath);
-    let resolvers = null;
-    let typeDefs = null;
+    let resolvers: object | null = null;
+    let typeDefs: string | null = null;
 
     try {
       resolvers = require(path.join(basePath, config.resolverFileName));
@@ -87,7 +98,7 @@ const graphqlAssembler = (
     }
 
     if (resolvers !== null && typeDefs !== null && typeDefs !== '') {
-      result.typeDefs.push(typeDefs);
+      typeDefsArr.push(typeDefs);
       result.resolvers = _.merge(result.resolvers, resolvers);
     }
   });
@@ -98,7 +109,7 @@ const graphqlAssembler = (
   // load directives gql
   const gqlDirectiveFiles = glob.sync(path.join(rootDirectives, config.directives.graphqlPath));
   const gqlDirectives = gqlDirectiveFiles.map((filePath) => {
-    return getGraphqlFile(filePath) || '';
+    return getGraphqlFile(filePath) ?? '';
   });
 
   try {
@@ -113,7 +124,7 @@ const graphqlAssembler = (
     // graphql setup without directives
   }
 
-  result.typeDefs = result.typeDefs.join('\n').trim();
+  result.typeDefs = typeDefsArr.join('\n').trim();
 
   try {
     const schema = buildSchema(result.typeDefs);
@@ -131,4 +142,4 @@ const graphqlAssembler = (
   }
 };
 
-module.exports = graphqlAssembler;
+export default graphqlAssembler;
