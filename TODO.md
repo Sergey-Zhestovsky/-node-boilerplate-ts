@@ -1,4 +1,4 @@
 # TODO
 
-- [ ] chose best dev-watch util
+- [x] chose best dev-watch util
 - [ ] refactor jslint
