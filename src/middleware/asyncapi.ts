@@ -5,11 +5,15 @@ import { TAsyncApiResponse, IPathContract, IFileContract } from '../loaders/asyn
 import { Client404Error } from '../libs/ClientError';
 import asyncapiConfig from '../config/asyncapi/asyncapi.config';
 
-const asyncapiMiddleware = (app: Express, asyncapi: TAsyncApiResponse) => {
+const asyncapiMiddleware = (
+  app: Express,
+  asyncapi: TAsyncApiResponse,
+  urlPath: string = '/asyncapi'
+) => {
   if (!asyncapiConfig.withAsyncapi) return;
 
   app.use(
-    '/asyncapi',
+    urlPath,
     express.static(
       path.resolve(__dirname, '../../node_modules', '@asyncapi/html-template/template'),
       { index: false, extensions: ['css', 'js'] }
@@ -18,7 +22,7 @@ const asyncapiMiddleware = (app: Express, asyncapi: TAsyncApiResponse) => {
 
   const asyncapiPromise = asyncapi();
 
-  app.get('/asyncapi', async (req, res, next) => {
+  app.get(urlPath, async (req, res, next) => {
     const asyncapiResponse = await asyncapiPromise;
 
     if (asyncapiResponse === null) {

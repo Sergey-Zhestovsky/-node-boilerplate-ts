@@ -29,3 +29,8 @@ type ExpressRequest<ReqBody = any, ReqQuery = any, ResBody = any> = import('expr
 
 type ExpressQueryRequest<ReqQuery = any, ResBody = any> = ExpressRequest<any, ReqQuery, ResBody>;
 type ExpressBodyRequest<ReqBody = any, ResBody = any> = ExpressRequest<ReqBody, any, ResBody>;
+
+interface RequireDefaultModule<T = unknown> {
+  default: T;
+}
+type RequireModule<T = unknown> = T | RequireDefaultModule<T>;

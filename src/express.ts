@@ -12,8 +12,8 @@ import {
 
 const app = express();
 
-swaggerMiddleware(app, swagger);
-asyncapiMiddleware(app, asyncapi);
+swaggerMiddleware(app, swagger, '/swagger');
+asyncapiMiddleware(app, asyncapi, '/asyncapi');
 
 app.use(entry);
 app.use('/api/v1/', routes);

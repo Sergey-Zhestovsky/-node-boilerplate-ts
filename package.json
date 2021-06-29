@@ -5,7 +5,8 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "cross-env DEBUG=app:* nodemon",
-    "dev-ts": "cross-env DEBUG=app:* ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev-ts-d": "cross-env DEBUG=app:* ts-node-dev --respawn src/server.ts",
+    "dev-ts-w": "cross-env DEBUG=app:* tsc-watch --onSuccess \"node ./dist/server.js\"",
     "prod": "cross-env NODE_ENV=production node dist/server.js",
     "build": "tsc",
     "test": "jest --verbose",
@@ -16,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@apidevtools/swagger-parser": "~10.0.2",
     "@asyncapi/generator": "~1.7.4",
     "@asyncapi/html-template": "~0.22.3",
     "@asyncapi/parser": "~1.6.0",
@@ -40,7 +42,6 @@
     "morgan": "~1.10.0",
     "openapi-types": "~9.0.3",
     "socket.io": "~4.1.2",
-    "swagger-parser": "~10.0.2",
     "swagger-ui-express": "~4.1.6",
     "uuid": "~8.3.2",
     "winston": "~3.3.3",
@@ -74,6 +75,7 @@
     "ts-jest": "~27.0.3",
     "ts-node": "~10.0.0",
     "ts-node-dev": "~1.1.6",
+    "tsc-watch": "~4.4.0",
     "typescript": "~4.3.4"
   },
   "engines": {

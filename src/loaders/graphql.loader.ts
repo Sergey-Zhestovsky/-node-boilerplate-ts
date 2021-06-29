@@ -24,7 +24,7 @@ const DEFAULT_CONFIG = {
   /** file name of graphql */
   graphqlFileName: 'types.graphql',
   /** file name of resolvers */
-  resolverFileName: 'resolvers.js',
+  resolverFileName: 'resolvers.ts',
   /** all about directives */
   directives: {
     /** root path to directives folder */
@@ -32,10 +32,10 @@ const DEFAULT_CONFIG = {
     /** path or pattern to all gql files */
     graphqlPath: '*.@(gql|graphql)',
     /** path to file with directives code */
-    index: '{directives,index}.js',
+    index: '{directives,index}.ts',
   },
   /** file path to loaders */
-  loadersFilePath: './utils/graphql/loaders/index.js',
+  loadersFilePath: './utils/graphql/loaders/index.ts',
 };
 
 const getGraphqlError = (error: GraphQLError, filePath?: string) => {
@@ -59,7 +59,7 @@ const getGraphqlFile = (pathToFile: string) => {
     } else if ((error as Record<string, string>).code === 'ENOENT') {
       throw error;
     } else {
-      return null;
+      return file ?? null;
     }
   }
 };
@@ -118,7 +118,7 @@ const graphqlAssembler = (
     if (gqlDirectiveCodeFile.length) {
       const directives = require(gqlDirectiveCodeFile[0]);
       result.schemaDirectives = directives;
-      result.typeDefs = result.typeDefs.concat(...gqlDirectives);
+      typeDefsArr.push(...gqlDirectives);
     }
   } catch (error) {
     // graphql setup without directives

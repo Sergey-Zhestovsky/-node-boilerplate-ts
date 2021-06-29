@@ -13,7 +13,7 @@ const healthCheck = (_: unknown, { input }: { input: IHealthCheckDto }) => {
   return HealthService.getServerStatus(withEnv);
 };
 
-module.exports = {
+export = {
   Query: {
     ping,
     healthCheck,

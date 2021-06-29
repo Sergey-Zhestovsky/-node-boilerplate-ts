@@ -1,4 +1,5 @@
 import './utils/setup-process';
+import './utils/setup-environment';
 
 import http from 'http';
 
@@ -7,9 +8,6 @@ import { socket } from './app';
 import db from './api/database';
 import rbac from './api/rbac';
 import logger from './libs/Logger';
-import setupEnvironment from './utils/setup-environment';
-
-setupEnvironment();
 
 const main = async (process: NodeJS.Process) => {
   try {
@@ -19,7 +17,7 @@ const main = async (process: NodeJS.Process) => {
     const server = http.createServer(app);
     socket(server);
 
-    const port = Number(process.env.PORT) || 3000;
+    const port = Number(process.env.PORT ?? 3000);
     const host = process.env.HOST ?? 'localhost';
 
     server.listen(port, host, () => {

@@ -13,6 +13,6 @@ class AuthorizedDirective extends SchemaDirectiveVisitor {
   }
 }
 
-export default {
+export = {
   authorized: AuthorizedDirective,
 };

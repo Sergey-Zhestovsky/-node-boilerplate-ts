@@ -16,7 +16,7 @@
         "strict": true,
         "noImplicitAny": true,
         "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": false, // true
+        "noFallthroughCasesInSwitch": true,
         "moduleResolution": "node",
         "types": [
             "jest"
@@ -39,4 +39,7 @@
     "files": [
         "src/types/index.d.ts",
     ],
+    "ts-node": {
+        "files": true
+    },
 }

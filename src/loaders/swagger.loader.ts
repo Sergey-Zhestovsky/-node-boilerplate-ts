@@ -5,7 +5,7 @@ import path from 'path';
 import glob from 'glob';
 import yaml from 'js-yaml';
 import _ from 'lodash';
-import SwaggerParser from 'swagger-parser';
+import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPI } from 'openapi-types';
 
 import logger from '../libs/Logger';
@@ -99,9 +99,9 @@ const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
 
     // validate file
     try {
-      return SwaggerParser.default.validate(resSwagger as OpenAPI.Document);
+      return SwaggerParser.validate(resSwagger as OpenAPI.Document);
     } catch (err) {
-      if (err instanceof Error) logger.error(err.message);
+      if (err instanceof Error) logger.error(`Swagger validation error: ${err.message}`);
       return null;
     }
   };

@@ -53,9 +53,9 @@ const DEFAULT_CONFIG: IDefaultConfig<unknown> = {
   filesStructure: {
     middleware: {
       path: '/middleware',
-      entryServerFile: 'entry-server.js',
-      entrySocketFile: 'entry-socket.js',
-      errorHandlerFile: 'error-handler.js',
+      entryServerFile: 'entry-server.ts',
+      entrySocketFile: 'entry-socket.ts',
+      errorHandlerFile: 'error-handler.ts',
     },
     handlers: '/handlers',
     controllers: '/controllers',
@@ -82,7 +82,14 @@ const retrieveFilesFromDir = <T = unknown>(dirPath: string) => {
 
   root.forEach((file) => {
     try {
-      res.push({ module: require(path.join(dirPath, file)), path: dirPath, file: file });
+      const module = require(path.join(dirPath, file)) as RequireModule<T>;
+
+      res.push({
+        // @ts-ignore: Suppose that `module.default` property comes from `export default`.
+        module: module.default ?? module,
+        path: dirPath,
+        file: file,
+      });
     } catch (e) {
       logger.warn(`Cant retrieve '${file}' file from '${dirPath}'`);
     }
