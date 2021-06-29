@@ -2,7 +2,7 @@
 
 import 'colors';
 
-import setupEnvironment from './setup-environment';
+import envLoader from '../loaders/environment.loader';
 import env from '../data/env.json';
 
 type TScript = (args: string[]) => Promise<string | void> | string | void;
@@ -24,13 +24,13 @@ const run = async (args: string[]) => {
     environment = env.DEVELOPMENT;
   }
 
-  setupEnvironment(`.env.${environment}`);
+  envLoader(`.env.${environment}`);
 
   let script;
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    script = require(`../scripts/${scriptName}`) as TScript;
+    script = (require(`../scripts/${scriptName}`) as RequireDefaultModule<TScript>).default;
   } catch (error) {
     return console.log(`Script with name: '${scriptName}' not found in src/scripts/ dir.`);
   }

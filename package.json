@@ -11,7 +11,7 @@
     "build": "tsc",
     "test": "jest --verbose",
     "lint": "node node_modules/.bin/eslint --ext .js src/",
-    "print-roles": "node src/utils/run-script print-roles"
+    "print-roles": "ts-node src/utils/run-script print-roles"
   },
   "keywords": [],
   "author": "",

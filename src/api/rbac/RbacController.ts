@@ -7,9 +7,9 @@ import * as roleSchemaConfig from '../../config/roles.config';
 import { IAllowConfig, IRestrictConfig, IRoleSchema } from './types';
 
 class RbacController {
-  private root: Role | null;
-  private roles: Role[];
-  private actions: Action[];
+  public root: Role | null;
+  public roles: Role[];
+  public actions: Action[];
 
   private readonly permissionStrategies: PermissionStrategies;
 
