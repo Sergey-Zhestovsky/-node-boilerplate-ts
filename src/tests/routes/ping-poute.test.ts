@@ -1,13 +1,13 @@
-const request = require('supertest');
+import request from 'supertest';
 
-const app = require('../../express');
+import app from '../../express';
 
 const BASE_PATH = '/api/v1';
 
 describe('Route /health-check', function () {
   describe('/ [GET]', function () {
     test('simple request', async () => {
-      const { status } = await request(app).get(`${BASE_PATH}/health-check`).query();
+      const { status } = await request(app).get(`${BASE_PATH}/health-check`).send();
 
       expect(status).toBe(200);
     });
@@ -35,7 +35,7 @@ describe('Route /health-check', function () {
         .query({ withTime: false });
 
       expect(status).toBe(200);
-      expect(body.result).toBe('pong');
+      expect((body as ServerResponse<string>).result).toBe('pong');
     });
 
     test('with valid body', async () => {

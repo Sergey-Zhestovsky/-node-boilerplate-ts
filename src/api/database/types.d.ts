@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-export interface IDataBaseConnector<T = any, R = any> {
+export interface IDataBaseConnector<T, R = Record<string, object>> {
   connection: T | null;
-  actions: Record<string, R>;
+  actions: R;
 
-  isConnected(): boolean;
+  isInitiated(): boolean;
+  isConnected(): Promise<boolean> | boolean;
   connect(): Promise<void>;
   flushDatabase(): Promise<void>;
   disconnect(): Promise<void>;

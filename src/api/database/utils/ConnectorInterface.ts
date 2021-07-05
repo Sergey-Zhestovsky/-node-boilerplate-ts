@@ -11,8 +11,13 @@ class ConnectorInterface implements IDataBaseConnector<unknown, unknown> {
     this.actions = actions;
   }
 
-  isConnected() {
+  isInitiated() {
     return this.connection !== null;
+  }
+
+  async isConnected() {
+    if (!this.isInitiated()) return false;
+    return true;
   }
 
   /**
