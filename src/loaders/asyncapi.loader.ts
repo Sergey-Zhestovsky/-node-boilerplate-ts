@@ -118,7 +118,7 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG): TAsy
       const parser = require('@asyncapi/parser');
       validAsyncapi = await parser.parse(resAsyncapi);
     } catch (error) {
-      logger.error(error);
+      logger.error(error as Error);
       return null;
     }
 

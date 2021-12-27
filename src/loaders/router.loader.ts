@@ -4,8 +4,6 @@ import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 
-import logger from '../libs/Logger';
-
 const DEFAULT_CONFIG = {
   /** relative folder path to file */
   pathPattern: './routers',
@@ -14,20 +12,17 @@ const DEFAULT_CONFIG = {
 };
 
 const routesAssembler = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
-  const root = fs.readdirSync(path.resolve(relativePath, config.pathPattern));
+  const rootPath = path.resolve(relativePath, config.pathPattern);
+  const root = fs.readdirSync(rootPath);
   const result: Router[] = [];
 
   root.forEach((rootFolder) => {
+    if (!fs.statSync(path.join(rootPath, rootFolder)).isDirectory()) return;
     const relPath = path.join(config.pathPattern, rootFolder);
-
-    try {
-      const pathToRouter = path.resolve(relativePath, relPath, config.fileName);
-      const router = require(pathToRouter) as RequireModule<Router>;
-      // @ts-ignore: Suppose that `router.default` property comes from `export default`.
-      result.push(router.default ?? router);
-    } catch (e) {
-      logger.warn(`Cant find '${config.fileName}' file in '${relPath}'`);
-    }
+    const fullPath = path.resolve(relativePath, relPath, config.fileName);
+    const router = require(fullPath) as RequireModule<Router>;
+    // @ts-ignore: Suppose that `router.default` property comes from `export default`.
+    result.push(router.default ?? router);
   });
 
   return result;

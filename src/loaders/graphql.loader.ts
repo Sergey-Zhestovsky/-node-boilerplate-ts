@@ -7,14 +7,15 @@ import path from 'path';
 import glob from 'glob';
 import _ from 'lodash';
 import { buildSchema, validateSchema, GraphQLError } from 'graphql';
-import { SchemaDirectiveVisitor, IResolvers } from 'graphql-tools';
+import { IResolvers } from '@graphql-tools/utils';
 
+import { TDirectiveTransformer } from 'src/types/graphql';
 import logger from '../libs/Logger';
 
 interface IGqlResult {
   typeDefs: string;
   resolvers: IResolvers;
-  schemaDirectives: Record<string, typeof SchemaDirectiveVisitor>;
+  schemaDirectives: Record<string, TDirectiveTransformer>;
   loaders: () => object;
 }
 
@@ -137,7 +138,7 @@ const graphqlAssembler = (
 
     return result;
   } catch (error) {
-    logger.error(getGraphqlError(error));
+    logger.error(getGraphqlError(error as GraphQLError));
     process.exit(1);
   }
 };

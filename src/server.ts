@@ -18,13 +18,14 @@ const main = async (process: NodeJS.Process) => {
     socket(server);
 
     const port = Number(process.env.PORT ?? 3000);
-    const host = process.env.HOST ?? 'localhost';
+    const host = process.env.HOST ?? undefined;
 
     server.listen(port, host, () => {
-      logger.info(`Server in '${process.env.NODE_ENV}' mode listening on: http://${host}:${port}`);
+      const domain = `http://${host ?? 'localhost'}:${port}`;
+      logger.info(`Server in '${process.env.NODE_ENV}' mode listening on: ${domain}`);
     });
   } catch (error) {
-    logger.error(error);
+    logger.error(error as Error);
   }
 };
 

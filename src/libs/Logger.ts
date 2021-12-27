@@ -157,8 +157,8 @@ class Logger {
     this.winston.log(level, message, ...args);
   }
 
-  error(message: string, ...args: any[]) {
-    this.winston.error(message, ...args);
+  error(message: string | Error, ...args: any[]) {
+    this.winston.error(message as string, ...args);
   }
 
   warn(message: string, ...args: any[]) {

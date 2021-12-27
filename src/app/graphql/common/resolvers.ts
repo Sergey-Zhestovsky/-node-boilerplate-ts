@@ -1,13 +1,13 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 
-export const Dictionary = new GraphQLScalarType({
+export const Dictionary = new GraphQLScalarType<Record<string, unknown> | null, string | null>({
   name: 'Dictionary',
   description: 'Dictionary with string keys and any values',
-  serialize(value: Record<string, unknown>) {
-    return value;
+  serialize(value) {
+    return value as string | null;
   },
-  parseValue(value: Record<string, unknown>) {
-    return value;
+  parseValue(value) {
+    return value as Record<string, unknown>;
   },
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) {

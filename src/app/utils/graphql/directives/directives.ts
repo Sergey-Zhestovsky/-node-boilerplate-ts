@@ -1,18 +1,26 @@
-import { SchemaDirectiveVisitor } from 'apollo-server';
-import { defaultFieldResolver, GraphQLField } from 'graphql';
+import { GraphQLFieldConfig, GraphQLSchema, defaultFieldResolver } from 'graphql';
+import { mapSchema, MapperKind, getDirective } from '@graphql-tools/utils';
+
 import { Client401Error } from '../../../../libs/ClientError';
 
-class AuthorizedDirective extends SchemaDirectiveVisitor {
-  visitFieldDefinition(field: GraphQLField<unknown, { user: unknown }>) {
-    const { resolve = defaultFieldResolver } = field;
+export const authorizedDirectiveTransformer = (
+  schema: GraphQLSchema,
+  directiveName = 'authorized'
+) => {
+  return mapSchema(schema, {
+    [MapperKind.OBJECT_FIELD]: (fieldConfig: GraphQLFieldConfig<unknown, { user: unknown }>) => {
+      const upperDirective = getDirective(schema, fieldConfig, directiveName)?.[0];
 
-    field.resolve = async function (root, args, ctx, info) {
-      if (!ctx.user) throw new Client401Error();
-      return resolve.call(this, root, args, ctx, info) as unknown;
-    };
-  }
-}
+      if (upperDirective) {
+        const { resolve = defaultFieldResolver } = fieldConfig;
 
-export = {
-  authorized: AuthorizedDirective,
+        fieldConfig.resolve = async function (root, args, ctx, info) {
+          if (!ctx.user) throw new Client401Error();
+          return resolve.call(this, root, args, ctx, info);
+        };
+      }
+
+      return fieldConfig;
+    },
+  });
 };
