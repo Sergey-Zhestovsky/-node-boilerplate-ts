@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { ClientError, Client500Error } from '../../libs/ClientError';
+import { ClientError, Client500Error } from '@/libs/server-responses';
 
 type TResultData = string | object | null;
 type TErrorData = ClientError | TResultData;
@@ -17,10 +17,8 @@ const throwMixin = (res: Response, error?: TErrorData) => {
   return res.status(clientError.status).return(null, clientError.getError());
 };
 
-const mutator = (req: Request, res: Response) => {
+export const mutateQuery = (req: Request, res: Response) => {
   res.return = (result, error) => sendObjMixin(res, result, error);
   res.throw = (error) => throwMixin(res, error);
   return { req, res };
 };
-
-export default mutator;

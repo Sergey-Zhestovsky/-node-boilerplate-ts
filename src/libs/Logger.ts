@@ -6,7 +6,7 @@ import winston, { Logform } from 'winston';
 import moment, { Moment } from 'moment';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
-import loggerConfig from '../config/logger.config';
+import loggerConfig from '@/config/logger.config';
 
 export interface ILoggerInfo extends Logform.TransformableInfo {
   code?: string;
@@ -170,4 +170,4 @@ class Logger {
   }
 }
 
-export default new Logger();
+export const logger = new Logger();

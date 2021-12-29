@@ -1,8 +1,8 @@
-import HealthService from '../../../services/HealthService';
-import logger from '../../../libs/Logger';
+import { HealthService } from '@/services/HealthService';
+import { logger } from '@/libs/Logger';
 import { HealthCheckDto, PingDto } from './dto';
 
-import env from '../../../data/env.json';
+import env from '@/data/env.json';
 
 const debug = logger.getDebug('controller:health-check');
 

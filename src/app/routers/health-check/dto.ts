@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { QueryDto } from '../../../api/classes/Dto';
+import { QueryDto } from '@/core/models/Dto';
 
 export class HealthCheckDto extends QueryDto {
   static validator(T: Joi.Root) {

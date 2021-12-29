@@ -1,6 +1,6 @@
+import { logger } from '@/libs/Logger';
 import Action from './Action';
 import Role from './Role';
-import logger from '../../libs/Logger';
 
 import { IRoleSchema } from './types';
 

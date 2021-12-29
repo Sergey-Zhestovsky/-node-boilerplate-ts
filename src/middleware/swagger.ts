@@ -1,10 +1,10 @@
 import { Express } from 'express';
 import swaggerUi, { JsonObject } from 'swagger-ui-express';
 
-import { Client404Error } from '../libs/ClientError';
-import swaggerConfig from '../config/swagger/swagger.config';
+import { Client404Error } from '@/libs/server-responses';
+import swaggerConfig from '@/config/swagger/swagger.config';
 
-const swaggerMiddleware = (
+export const swaggerMiddleware = (
   app: Express,
   swagger: () => Promise<JsonObject | null>,
   urlPath: string = '/swagger'
@@ -23,5 +23,3 @@ const swaggerMiddleware = (
     return swaggerUi.setup(swaggerAPI)(req, res, next);
   });
 };
-
-export default swaggerMiddleware;

@@ -1,14 +1,14 @@
-import logger from '../libs/Logger';
+import { logger } from '@/libs/Logger';
 
 const debug = logger.getDebug('service:health');
 
-interface IServerStatus {
+export interface IServerStatus {
   status: string;
   started: boolean;
   environment?: Record<string, string>;
 }
 
-class HealthService {
+export class HealthService {
   static getServerStatus(withEnvironment = false) {
     debug(`Get in pingController with environment: '%s'`, withEnvironment);
 
@@ -22,5 +22,3 @@ class HealthService {
     return result;
   }
 }
-
-export default HealthService;

@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
-import HealthService from '../../../services/HealthService';
-import SocketHandler from '../../utils/socket/SocketHandler';
+import { HealthService } from '@/services/HealthService';
+import SocketHandler from '../utils/SocketHandler';
 import HeartbeatEvent from '../events/HeartbeatEvent';
 
 class HeartbeatHandler extends SocketHandler {

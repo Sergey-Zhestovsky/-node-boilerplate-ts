@@ -5,8 +5,8 @@ import 'colors';
 
 import dotenv from 'dotenv';
 
-import { list as envVariables } from '../data/env-variables.json';
-import env from '../data/env.json';
+import { list as envVariables } from '@/data/env-variables.json';
+import env from '@/data/env.json';
 
 const validateVariables = (configPath?: string): boolean => {
   if (configPath === undefined) {

@@ -1,4 +1,4 @@
-import envLoader from '../loaders/environment.loader';
+import envLoader from 'core/loaders/environment.loader';
 
 envLoader('.env.test');
 

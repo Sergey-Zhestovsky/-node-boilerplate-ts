@@ -1,5 +1,5 @@
-import HealthService from '../../../services/HealthService';
-import env from '../../../data/env.json';
+import { HealthService } from '@/services/HealthService';
+import env from '@/data/env.json';
 
 const ping = () => 'pong';
 

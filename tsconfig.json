@@ -9,6 +9,11 @@
         ],
         "allowJs": true,
         "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        },
         "checkJs": false,
         "declaration": false,
         "sourceMap": true,
@@ -34,12 +39,12 @@
         ".DS_Store"
     ],
     "include": [
-        "src/**/*",
+        "src/**/*"
     ],
     "files": [
-        "src/types/index.d.ts",
+        "src/types/index.d.ts"
     ],
     "ts-node": {
         "files": true
-    },
+    }
 }

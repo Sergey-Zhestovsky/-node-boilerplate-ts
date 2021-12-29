@@ -1,7 +1,7 @@
 import { GraphQLFieldConfig, GraphQLSchema, defaultFieldResolver } from 'graphql';
 import { mapSchema, MapperKind, getDirective } from '@graphql-tools/utils';
 
-import { Client401Error } from '../../../../libs/ClientError';
+import { Client401Error } from '@/libs/server-responses';
 
 export const authorizedDirectiveTransformer = (
   schema: GraphQLSchema,

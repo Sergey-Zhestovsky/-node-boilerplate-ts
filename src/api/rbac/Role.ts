@@ -1,5 +1,5 @@
+import Tree from '@/core/models/Tree';
 import Action from './Action';
-import Tree from '../classes/Tree';
 
 type TSynchronizePayload = { id: string } | string;
 

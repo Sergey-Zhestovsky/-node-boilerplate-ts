@@ -3,12 +3,7 @@ import express from 'express';
 
 import { routes, swagger, asyncapi } from './app';
 import { applyGraphql } from './apollo-server';
-import {
-  entry,
-  errorHandler,
-  swagger as swaggerMiddleware,
-  asyncapi as asyncapiMiddleware,
-} from './middleware';
+import { entry, errorHandlers, swaggerMiddleware, asyncapiMiddleware } from './middleware';
 
 const app = express();
 
@@ -19,6 +14,6 @@ asyncapiMiddleware(app, asyncapi, '/asyncapi');
 
 app.use(entry);
 app.use('/api/v1/', routes);
-app.use(errorHandler);
+app.use(errorHandlers);
 
 export default app;

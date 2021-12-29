@@ -1,4 +1,4 @@
-import logger from '../libs/Logger';
+import { logger } from '@/libs/Logger';
 
 const errorHandler = (error: Error) => {
   logger.error(`Uncaught Error: '${error.message}'`, error);

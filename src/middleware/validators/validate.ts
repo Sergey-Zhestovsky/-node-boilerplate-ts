@@ -1,10 +1,10 @@
 import Joi from 'joi';
 import { RequestHandler } from 'express';
 
-import { Dto } from '../../api/classes/Dto';
-import Validator, { TSchemaContainer } from '../../libs/Validator';
-import { Client400Error } from '../../libs/ClientError';
-import classOf from '../../utils/class-of';
+import { Dto } from '@/core/models/Dto';
+import Validator, { TSchemaContainer } from '@/libs/Validator';
+import { Client400Error } from '@/libs/server-responses';
+import { classOf } from '@/utils/class-of';
 
 type TRequestProperty = 'body' | 'query' | 'params';
 
@@ -15,7 +15,7 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
     replaceContent?: boolean
   ) => {
     const validator = new Validator();
-    const isDto = classOf(schema as typeof Dto, Dto, {});
+    const isDto = classOf(schema as typeof Dto, Dto);
 
     validator.setSchema(
       isDto ? (schema as typeof Dto).validator : (schema as TSchemaContainer),
@@ -33,7 +33,7 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
         return next(
           new Client400Error({
             message: errorMessage(validationResult.errorMessage ?? ''),
-            description: validationResult.errors,
+            descriptor: validationResult.errors,
           })
         );
       }

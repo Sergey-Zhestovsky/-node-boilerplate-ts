@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import { Server, Socket } from 'socket.io';
 
-import Validator from '../../../libs/Validator';
-import { Client400Error, Client500Error } from '../../../libs/ClientError';
+import Validator from '@/libs/Validator';
+import { Client400Error, Client500Error } from '@/libs/server-responses';
 import SocketHandler from './SocketHandler';
 
 class SocketHandlerFactory {

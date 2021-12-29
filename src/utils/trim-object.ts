@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-type TFilter<T extends object> = (val: any, name: keyof T, obj: T) => boolean;
+export type TFilter<T extends object> = (val: any, name: keyof T, obj: T) => boolean;
 
-const trimObject = <T extends object = Record<string, unknown>>(
+export const trimObject = <T extends object = Record<string, unknown>>(
   object: T,
   filter: TFilter<T> = (val, name, obj) => true
 ): Partial<T> => {
@@ -17,5 +17,3 @@ const trimObject = <T extends object = Record<string, unknown>>(
 
   return result;
 };
-
-export default trimObject;

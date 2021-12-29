@@ -1,32 +1,42 @@
 {
-  "InternalServerError": {
-    "code": "000",
-    "type": "InternalServerError",
-    "status": 500,
-    "message": "Internal server error."
-  },
-  "ValidationError": {
-    "code": "001",
-    "type": "ValidationError",
+  "BadRequest": {
+    "type": "BadRequest",
     "status": 400,
     "message": "Bad request."
   },
-  "AuthorizationError": {
-    "code": "002",
-    "type": "AuthorizationError",
+  "Unauthorized": {
+    "type": "Unauthorized",
     "status": 401,
     "message": "Access denied: not authorized."
   },
-  "PrivilegeError": {
-    "code": "003",
-    "type": "PrivilegeError",
+  "Forbidden": {
+    "type": "Forbidden",
     "status": 403,
     "message": "Access denied: wrong privilege."
   },
   "NotFound": {
-    "code": "004",
     "type": "NotFound",
     "status": 404,
     "message": "Not found."
+  },
+  "Conflict": {
+    "type": "Conflict",
+    "status": 409,
+    "message": "Conflict with the current state of the resource."
+  },
+  "Gone": {
+    "type": "Gone",
+    "status": 410,
+    "message": "Resource is no longer available."
+  },
+  "TooManyRequests": {
+    "type": "TooManyRequests",
+    "status": 429,
+    "message": "Too many requests."
+  },
+  "InternalServerError": {
+    "type": "InternalServerError",
+    "status": 500,
+    "message": "Internal server error."
   }
 }

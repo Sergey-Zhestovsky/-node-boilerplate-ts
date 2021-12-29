@@ -1,11 +1,11 @@
 import events from 'events';
 import { Server, Socket } from 'socket.io';
 
-import { ClientError, Client401Error, Client500Error } from '../../../libs/ClientError';
-import { ClientRedirection } from '../../../libs/ClientRedirection';
-import ServerError from '../../../libs/ServerError';
-import logger from '../../../libs/Logger';
-import env from '../../../data/env.json';
+import { ClientError, Client401Error, Client500Error } from '@/libs/server-responses/ClientError';
+import { ClientRedirection, ServerError } from '@/libs/server-responses';
+import { logger } from '@/libs/Logger';
+
+import env from '@/data/env.json';
 
 events.captureRejections = true;
 

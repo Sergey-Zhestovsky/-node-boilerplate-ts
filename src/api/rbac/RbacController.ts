@@ -3,7 +3,7 @@ import Action from './Action';
 import PermissionStrategies, { TStrategyName } from './PermissionStrategies';
 import RbacConstructor from './RbacConstructor';
 
-import * as roleSchemaConfig from '../../config/roles.config';
+import * as roleSchemaConfig from '@/config/roles.config';
 import { IAllowConfig, IRestrictConfig, IRoleSchema } from './types';
 
 class RbacController {
@@ -97,9 +97,23 @@ class RbacController {
   /**
    * Check for user permission based on permission strategies.
    */
-  permitByStrategy(strategyName: TStrategyName, currentRole: Role | string, targetRole: Role | string): boolean;
-  permitByStrategy(strategyName: 'Restrict', currentRole: Role | string, targetRole: Role | string, options: IRestrictConfig): boolean;
-  permitByStrategy(strategyName: 'Allow', currentRole: Role | string, targetRole: Role | string, options: IAllowConfig): boolean;
+  permitByStrategy(
+    strategyName: TStrategyName,
+    currentRole: Role | string,
+    targetRole: Role | string
+  ): boolean;
+  permitByStrategy(
+    strategyName: 'Restrict',
+    currentRole: Role | string,
+    targetRole: Role | string,
+    options: IRestrictConfig
+  ): boolean;
+  permitByStrategy(
+    strategyName: 'Allow',
+    currentRole: Role | string,
+    targetRole: Role | string,
+    options: IAllowConfig
+  ): boolean;
   permitByStrategy(
     strategy: TStrategyName,
     currentRole: Role | string,

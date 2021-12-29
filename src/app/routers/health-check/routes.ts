@@ -1,8 +1,8 @@
 import { Router as expressRouter } from 'express';
 import { RequestHandler } from 'express-serve-static-core';
 
+import { validators } from '@/middleware';
 import { pingController, healthController } from './controllers';
-import { validators } from '../../../middleware';
 import { HealthCheckDto, PingDto } from './dto';
 
 const { validateQuery } = validators;

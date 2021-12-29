@@ -1,7 +1,5 @@
-import entry from './entry';
-import errorHandler from './error-handlers';
-import swagger from './swagger';
-import asyncapi from './asyncapi';
-
-export { entry, errorHandler, swagger, asyncapi };
 export * as validators from './validators';
+export * from './entry';
+export * from './error-handlers';
+export * from './swagger';
+export * from './asyncapi';

@@ -9,7 +9,7 @@
     "build": "tsc",
     "test": "jest --verbose",
     "lint": "node node_modules/.bin/eslint --ext .js src/",
-    "print-roles": "ts-node src/utils/run-script print-roles"
+    "print-roles": "ts-node src/core/helpers/run-script print-roles"
   },
   "keywords": [],
   "author": "",
@@ -38,6 +38,7 @@
     "joi": "~17.5.0",
     "js-yaml": "~4.1.0",
     "lodash": "~4.17.21",
+    "module-alias": "^2.2.2",
     "moment": "~2.29.1",
     "morgan": "~1.10.0",
     "openapi-types": "~10.0.0",
@@ -56,6 +57,7 @@
     "@types/jest": "~27.0.3",
     "@types/js-yaml": "~4.0.5",
     "@types/lodash": "~4.14.178",
+    "@types/module-alias": "^2.0.1",
     "@types/morgan": "~1.9.3",
     "@types/supertest": "^2.0.11",
     "@types/swagger-ui-express": "~4.1.3",

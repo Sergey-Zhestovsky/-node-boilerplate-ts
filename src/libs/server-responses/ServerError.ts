@@ -10,7 +10,7 @@ interface IServerErrorConstructor {
 
 type TServerErrorVariant = ServerError | Error | Record<string, string> | string;
 
-class ServerError extends ClientError {
+export class ServerError extends ClientError {
   static create(error: TServerErrorVariant) {
     if (error instanceof ServerError) {
       return error;
@@ -64,5 +64,3 @@ class ServerError extends ClientError {
     };
   }
 }
-
-export default ServerError;

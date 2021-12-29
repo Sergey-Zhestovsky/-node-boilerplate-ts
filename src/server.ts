@@ -1,5 +1,6 @@
-import './utils/setup-process';
-import './utils/setup-environment';
+import './core/helpers/setup-modules';
+import './core/helpers/setup-process';
+import './core/helpers/setup-environment';
 
 import http from 'http';
 
@@ -7,7 +8,7 @@ import app from './express';
 import { socket } from './app';
 import db from './api/database';
 import rbac from './api/rbac';
-import logger from './libs/Logger';
+import { logger } from './libs/Logger';
 
 const main = async (process: NodeJS.Process) => {
   try {

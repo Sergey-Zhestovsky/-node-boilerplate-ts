@@ -9,8 +9,8 @@ import _ from 'lodash';
 import { buildSchema, validateSchema, GraphQLError } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 
-import { TDirectiveTransformer } from 'src/types/graphql';
-import logger from '../libs/Logger';
+import { TDirectiveTransformer } from '@/types/graphql';
+import { logger } from '@/libs/Logger';
 
 interface IGqlResult {
   typeDefs: string;
@@ -22,6 +22,8 @@ interface IGqlResult {
 const DEFAULT_CONFIG = {
   /** relative folder path to file */
   pathPattern: './graphql',
+  /** */
+  excludeFolders: [/^_/],
   /** file name of graphql */
   graphqlFileName: 'types.graphql',
   /** file name of resolvers */
@@ -29,14 +31,19 @@ const DEFAULT_CONFIG = {
   /** all about directives */
   directives: {
     /** root path to directives folder */
-    rootPath: './utils/graphql/directives',
+    rootPath: './graphql/_misc/directives',
     /** path or pattern to all gql files */
     graphqlPath: '*.@(gql|graphql)',
     /** path to file with directives code */
     index: '{directives,index}.ts',
   },
-  /** file path to loaders */
-  loadersFilePath: './utils/graphql/loaders/index.ts',
+};
+
+const excludeFolder = (folderName: string, rules: Array<RegExp | string>) => {
+  return rules.some((rule) => {
+    if (typeof rule === 'string') return folderName === rule;
+    return rule.test(folderName);
+  });
 };
 
 const getGraphqlError = (error: GraphQLError, filePath?: string) => {
@@ -81,6 +88,8 @@ const graphqlAssembler = (
 
   // load typeDefs & resolvers
   root.forEach((rootFolder) => {
+    if (excludeFolder(rootFolder, config.excludeFolders)) return;
+
     const relPath = path.join(config.pathPattern, rootFolder);
     const basePath = path.resolve(relativePath, relPath);
     let resolvers: object | null = null;

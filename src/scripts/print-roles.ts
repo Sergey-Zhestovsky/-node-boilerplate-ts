@@ -2,12 +2,13 @@
 /* eslint-disable no-param-reassign */
 
 import 'colors';
+import '../core/helpers/setup-modules';
 
 import Table from 'cli-table3';
 
-import rbac from '../api/rbac';
-import Role from 'src/api/rbac/Role';
-import RbacController from 'src/api/rbac/RbacController';
+import rbac from '@/api/rbac';
+import Role from '@/api/rbac/Role';
+import RbacController from '@/api/rbac/RbacController';
 
 interface IZone<T = number> {
   left: T;

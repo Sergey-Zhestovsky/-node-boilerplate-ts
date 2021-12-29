@@ -8,8 +8,8 @@ import glob from 'glob';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 
-import logger from '../libs/Logger';
-import asyncapiConfig from '../config/asyncapi/asyncapi.config';
+import { logger } from '@/libs/Logger';
+import asyncapiConfig from '@/config/asyncapi/asyncapi.config';
 
 interface IAsyncApiFileObject<T = object> {
   tags?: unknown[];
@@ -34,7 +34,7 @@ export interface IFileContract {
 export type TAsyncApiResponse = () => Promise<IPathContract | IFileContract | null>;
 
 const DEFAULT_CONFIG = {
-  tempFileFolder: path.resolve(__dirname, '../../temp/temp-async-api'),
+  tempFileFolder: path.resolve(__dirname, '../../../temp/temp-async-api'),
   filePath: './socket/{docs/,namespaces/docs}',
   fileName: '*asyncapi.@(yaml|yml|json)',
   style: '#asyncapi { min-height: 100vh; }',
@@ -64,7 +64,7 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG): TAsy
   return async () => {
     // assemble asyncapi doc
     // get base file
-    const baseAsyncapiPath = path.resolve(__dirname, '../config/asyncapi', config.fileName);
+    const baseAsyncapiPath = path.resolve(__dirname, '../../config/asyncapi', config.fileName);
     const existedAsyncapiBasePaths = glob.sync(baseAsyncapiPath);
 
     if (existedAsyncapiBasePaths.length === 0) {

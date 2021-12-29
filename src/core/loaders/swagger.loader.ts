@@ -8,8 +8,8 @@ import _ from 'lodash';
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPI } from 'openapi-types';
 
-import logger from '../libs/Logger';
-import swaggerConfig from '../config/swagger/swagger.config';
+import { logger } from '@/libs/Logger';
+import swaggerConfig from '@/config/swagger/swagger.config';
 
 interface ISwaggerFileObject<T = object> {
   servers?: unknown[];
@@ -50,7 +50,7 @@ const extractObjectFromFile = (pathToFile: string) => {
 const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   return async () => {
     // load base file
-    const baseSwaggerPath = path.resolve(__dirname, '../config/swagger', config.fileName);
+    const baseSwaggerPath = path.resolve(__dirname, '../../config/swagger', config.fileName);
     const swaggerBasePaths = glob.sync(baseSwaggerPath);
 
     if (swaggerBasePaths.length === 0) {

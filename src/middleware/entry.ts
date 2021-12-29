@@ -5,22 +5,23 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 
-import logger from '../libs/Logger';
-import queryMutator from './utils/query-mutator';
-import corsConfig from '../config/cors.config';
-import helmetConfig from '../config/helmet.config';
+import { logger } from '@/libs/Logger';
+import { mutateQuery } from './utils/query-mutator';
+
+import corsConfig from '@/config/cors.config';
+import helmetConfig from '@/config/helmet.config';
 
 const setupCors = (): RequestHandler => {
   if (!corsConfig.withCors) return (req, res, next) => next();
   return cors(corsConfig.config);
 };
 
-const mutateQuery: RequestHandler = (req, res, next) => {
-  queryMutator(req, res);
+const mutateQueryMiddleware = (): RequestHandler => (req, res, next) => {
+  mutateQuery(req, res);
   next();
 };
 
-export default [
+export const entry = [
   setupCors(),
   helmet(helmetConfig),
   express.urlencoded({ extended: false }),
@@ -28,5 +29,5 @@ export default [
   cookieParser(),
   compression(),
   morgan(logger.middlewareOutput, { stream: logger.stream() }),
-  mutateQuery,
+  mutateQueryMiddleware(),
 ];

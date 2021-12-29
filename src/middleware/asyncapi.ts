@@ -1,11 +1,11 @@
 import path from 'path';
 import express, { Express } from 'express';
 
-import { TAsyncApiResponse, IPathContract, IFileContract } from '../loaders/asyncapi.loader';
-import { Client404Error } from '../libs/ClientError';
-import asyncapiConfig from '../config/asyncapi/asyncapi.config';
+import { TAsyncApiResponse, IPathContract, IFileContract } from '@/core/loaders/asyncapi.loader';
+import { Client404Error } from '@/libs/server-responses';
+import asyncapiConfig from '@/config/asyncapi/asyncapi.config';
 
-const asyncapiMiddleware = (
+export const asyncapiMiddleware = (
   app: Express,
   asyncapi: TAsyncApiResponse,
   urlPath: string = '/asyncapi'
@@ -36,5 +36,3 @@ const asyncapiMiddleware = (
     next();
   });
 };
-
-export default asyncapiMiddleware;
