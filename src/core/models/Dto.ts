@@ -11,5 +11,3 @@ export class Dto {
 export class QueryDto extends Dto {}
 
 export class BodyDto extends Dto {}
-
-export default Dto;

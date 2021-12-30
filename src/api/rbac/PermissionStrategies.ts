@@ -1,5 +1,5 @@
 import { logger } from '@/libs/Logger';
-import RbacController from './RbacController';
+import { RbacController } from './RbacController';
 
 import { IAllowConfig, IRestrictConfig, TStrategyAlg } from './types';
 
@@ -14,7 +14,7 @@ export enum EStrategy {
 
 export type TStrategyName = keyof typeof EStrategy;
 
-class PermissionStrategies {
+export class PermissionStrategies {
   static get Strategies() {
     return EStrategy;
   }
@@ -95,5 +95,3 @@ class PermissionStrategies {
     return true;
   }
 }
-
-export default PermissionStrategies;

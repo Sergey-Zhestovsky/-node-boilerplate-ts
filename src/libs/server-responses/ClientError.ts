@@ -1,4 +1,4 @@
-import { trimObject } from '@/utils/trim-object';
+import { trimObject } from '@/utils';
 import clientErrors from '@/data/client-errors.json';
 import { EClientErrorType } from './client-error-type';
 
@@ -8,13 +8,21 @@ interface IBaseClientError {
   message: string;
 }
 
-interface IClientError<T = never> extends Partial<IBaseClientError> {
+interface IClientError<T = unknown> extends Partial<IBaseClientError> {
   descriptor?: T;
 }
 
 type TClientErrorVariant = ClientError | Error | Record<string, string> | string;
 
-export class ClientError<Descriptor = never> extends Error {
+export interface IPublicError<T = unknown> {
+  type: string;
+  status: number;
+  message?: string;
+  descriptor?: T;
+  date: string;
+}
+
+export class ClientError<Descriptor = unknown> extends Error {
   static create(error: TClientErrorVariant, description?: string) {
     if (error instanceof ClientError) {
       return error;
@@ -29,7 +37,7 @@ export class ClientError<Descriptor = never> extends Error {
     return new ClientError({ message: description });
   }
 
-  protected static construct<Descriptor = never>(
+  protected static construct<Descriptor = unknown>(
     originErrorObject: IClientError<Descriptor>,
     override?: IClientError<Descriptor> | string
   ) {
@@ -72,12 +80,12 @@ export class ClientError<Descriptor = never> extends Error {
   }
 
   getError() {
-    return trimObject(this.getRawError());
+    return trimObject(this.getRawError()) as IPublicError<Descriptor>;
   }
 }
 
 const buildErrorClass = (defaultOptions: IBaseClientError) => {
-  return class <Descriptor = never> extends ClientError<Descriptor> {
+  return class <Descriptor = unknown> extends ClientError<Descriptor> {
     constructor(paramsOrMessage?: IClientError<Descriptor> | string) {
       super(ClientError.construct(defaultOptions, paramsOrMessage));
     }

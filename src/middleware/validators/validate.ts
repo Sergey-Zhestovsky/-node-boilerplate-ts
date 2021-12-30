@@ -2,9 +2,9 @@ import Joi from 'joi';
 import { RequestHandler } from 'express';
 
 import { Dto } from '@/core/models/Dto';
-import Validator, { TSchemaContainer } from '@/libs/Validator';
+import { Validator, TSchemaContainer } from '@/libs/Validator';
 import { Client400Error } from '@/libs/server-responses';
-import { classOf } from '@/utils/class-of';
+import { classOf } from '@/utils';
 
 type TRequestProperty = 'body' | 'query' | 'params';
 

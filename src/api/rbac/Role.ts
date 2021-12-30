@@ -1,9 +1,9 @@
-import Tree from '@/core/models/Tree';
-import Action from './Action';
+import { Tree } from '@/core/models/Tree';
+import { Action } from './Action';
 
 type TSynchronizePayload = { id: string } | string;
 
-class Role extends Tree {
+export class Role extends Tree {
   constructor(
     private id: string | null | undefined,
     public readonly descriptor: string,
@@ -63,5 +63,3 @@ class Role extends Tree {
     return this.can(action);
   }
 }
-
-export default Role;

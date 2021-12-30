@@ -1,4 +1,4 @@
-class Tree {
+export class Tree {
   protected readonly nodes: Tree[];
 
   constructor(nodes?: Tree[]) {
@@ -15,5 +15,3 @@ class Tree {
     callback(this as T);
   }
 }
-
-export default Tree;

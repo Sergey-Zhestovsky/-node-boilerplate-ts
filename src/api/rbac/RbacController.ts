@@ -1,12 +1,12 @@
-import Role from './Role';
-import Action from './Action';
-import PermissionStrategies, { TStrategyName } from './PermissionStrategies';
-import RbacConstructor from './RbacConstructor';
+import { Role } from './Role';
+import { Action } from './Action';
+import { PermissionStrategies, TStrategyName } from './PermissionStrategies';
+import { RbacConstructor } from './RbacConstructor';
 
 import * as roleSchemaConfig from '@/config/roles.config';
 import { IAllowConfig, IRestrictConfig, IRoleSchema } from './types';
 
-class RbacController {
+export class RbacController {
   public root: Role | null;
   public roles: Role[];
   public actions: Action[];
@@ -125,5 +125,3 @@ class RbacController {
     return this.permissionStrategies.getStrategy(strategy)(cRole, tRole, options as never);
   }
 }
-
-export default RbacController;

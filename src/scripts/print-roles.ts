@@ -7,8 +7,8 @@ import '../core/helpers/setup-modules';
 import Table from 'cli-table3';
 
 import rbac from '@/api/rbac';
-import Role from '@/api/rbac/Role';
-import RbacController from '@/api/rbac/RbacController';
+import { Role } from '@/api/rbac/Role';
+import { RbacController } from '@/api/rbac/RbacController';
 
 interface IZone<T = number> {
   left: T;

@@ -8,8 +8,6 @@ import {
 } from '@/libs/server-responses';
 import { logger } from '@/libs/Logger';
 
-import env from '@/data/env.json';
-
 const client404Error: RequestHandler = (req, res, next) => {
   return next(new Client404Error());
 };
@@ -24,7 +22,6 @@ const serverError: ErrorRequestHandler = (error, req, res, next) => {
   const err = ServerError.create(error);
   void err.correlate();
   logger.error(`Unhandled server error: '${err.name}': '${err.message}'.\n${err.stack ?? ''}`);
-  if (process.env.NODE_ENV !== env.DEVELOPMENT) err.removeStack();
   return res.throw(err);
 };
 

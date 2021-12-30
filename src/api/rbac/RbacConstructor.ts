@@ -1,6 +1,6 @@
 import { logger } from '@/libs/Logger';
-import Action from './Action';
-import Role from './Role';
+import { Action } from './Action';
+import { Role } from './Role';
 
 import { IRoleSchema } from './types';
 
@@ -10,7 +10,7 @@ interface IConstructedTree {
   actions: Action[];
 }
 
-class RbacConstructor {
+export class RbacConstructor {
   private readonly roleSchemasObj: Record<string, IRoleSchema>;
 
   constructor(roleSchemasObj: Record<string, IRoleSchema>) {
@@ -146,5 +146,3 @@ class RbacConstructor {
     };
   }
 }
-
-export default RbacConstructor;

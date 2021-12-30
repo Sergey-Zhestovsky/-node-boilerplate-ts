@@ -14,7 +14,7 @@ export interface IValidationResult<T = unknown> {
   errorMessage: string | null;
 }
 
-class Validator {
+export class Validator {
   private schema: Joi.ObjectSchema | null;
   private config: ValidationOptions;
 
@@ -98,5 +98,3 @@ class Validator {
     };
   }
 }
-
-export default Validator;
