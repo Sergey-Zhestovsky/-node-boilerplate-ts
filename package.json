@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "cross-env DEBUG=app:* ts-node-dev --respawn --watch=\".env*\" src/server.ts",
+    "dev": "cross-env DEBUG=app:* ts-node-dev --respawn --watch=\"environment/.env*\" src/server.ts",
     "prod": "cross-env NODE_ENV=production node dist/server.js",
     "build": "tsc",
     "test": "jest --verbose",

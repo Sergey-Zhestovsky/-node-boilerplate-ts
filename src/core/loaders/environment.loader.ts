@@ -4,35 +4,40 @@
 import 'colors';
 
 import dotenv from 'dotenv';
+import path from 'path';
 
 import { list as envVariables } from '@/data/env-variables.json';
 import env from '@/data/env.json';
 
-const validateVariables = (configPath?: string): boolean => {
-  if (configPath === undefined) {
+const getConfigFilePath = (fileName: string) => {
+  return path.join('environment', fileName);
+};
+
+const validateVariables = (configFileName?: string): boolean => {
+  if (configFileName === undefined) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     process.env.NODE_ENV ?? (process.env.NODE_ENV = env.DEVELOPMENT);
 
     switch (process.env.NODE_ENV) {
       case env.PRODUCTION:
-        configPath = `.env.production`;
+        configFileName = `.env.production`;
         break;
 
       case env.TEST:
-        configPath = `.env.test`;
+        configFileName = `.env.test`;
         break;
 
       case env.DEVELOPMENT:
       default:
-        configPath = `.env.development`;
+        configFileName = `.env.development`;
         break;
     }
   }
 
-  dotenv.config({ path: `${configPath}.local` });
-  dotenv.config({ path: configPath });
-  dotenv.config({ path: '.env.local' });
-  dotenv.config({ path: '.env' });
+  dotenv.config({ path: getConfigFilePath(`${configFileName}.local`) });
+  dotenv.config({ path: getConfigFilePath(configFileName) });
+  dotenv.config({ path: getConfigFilePath('.env.local') });
+  dotenv.config({ path: getConfigFilePath('.env') });
 
   const allVariables: Record<string, string> = {};
   const missedVariables: string[] = [];
