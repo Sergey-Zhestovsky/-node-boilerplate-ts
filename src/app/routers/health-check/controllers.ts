@@ -1,14 +1,13 @@
 import { HealthService } from '@/services/HealthService';
 import { logger } from '@/libs/Logger';
+import { config } from '@/libs/config';
 import { HealthCheckDto, PingDto } from './dto';
-
-import env from '@/data/env.json';
 
 const debug = logger.getDebug('controller:health-check');
 
 export const healthController = (healthCheckDto: HealthCheckDto) => {
   debug(`Get in healthController with environment: '%s'`, healthCheckDto.withEnv);
-  if (process.env.NODE_ENV === env.PRODUCTION) healthCheckDto.withEnv = false;
+  if (config.isProduction()) healthCheckDto.withEnv = false;
   const result = HealthService.getServerStatus(healthCheckDto.withEnv);
   debug(`Get out healthController`);
   return result;

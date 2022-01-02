@@ -1,6 +1,6 @@
 import { CorsOptions } from 'cors';
 
-import env from '../data/env.json';
+import { environment } from '@/libs/config';
 
 interface ICorsConfig {
   withCors: boolean;
@@ -8,7 +8,7 @@ interface ICorsConfig {
 }
 
 const config: ICorsConfig = {
-  withCors: process.env.NODE_ENV === env.PRODUCTION,
+  withCors: environment.isProduction(),
   config: {},
 };
 

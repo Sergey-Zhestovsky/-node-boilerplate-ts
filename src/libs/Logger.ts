@@ -6,7 +6,7 @@ import winston, { Logform } from 'winston';
 import moment, { Moment } from 'moment';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
-import loggerConfig from '@/config/logger.config';
+import { config } from '@/libs/config';
 
 export interface ILoggerInfo extends Logform.TransformableInfo {
   code?: string;
@@ -62,12 +62,12 @@ class Logger {
   static getFileTransport(
     logPath: string,
     level: string,
-    config: TFileTransportConfig = loggerConfig.fileTransport
+    options: TFileTransportConfig = config.global.logger.fileTransport
   ) {
     return new DailyRotateFile({
       level: level,
       format: Logger.getFormat(),
-      ...config,
+      ...options,
       filename: path.join(logPath, level, `${level}-%DATE%.log`),
     });
   }
@@ -119,7 +119,7 @@ class Logger {
       transports.push(Logger.getErrorTransport(logPath));
     }
 
-    if (logInConsole && !loggerConfig.console.blackListModes.includes(process.env.NODE_ENV)) {
+    if (logInConsole && !config.global.logger.console.blackListModes.includes(config.nodeEnv)) {
       transports.push(Logger.getConsoleTransport());
     }
 
@@ -132,7 +132,7 @@ class Logger {
   private readonly winston: winston.Logger;
   private readonly debug: debug.Debugger;
 
-  constructor(logPath = loggerConfig.logPath) {
+  constructor(logPath = config.global.logger.logPath) {
     this.winston = Logger.buildLogger(logPath);
     this.debug = debug('app');
   }

@@ -9,7 +9,7 @@ import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPI } from 'openapi-types';
 
 import { logger } from '@/libs/Logger';
-import swaggerConfig from '@/config/swagger/swagger.config';
+import { config } from '@/libs/config';
 
 interface ISwaggerFileObject<T = object> {
   servers?: unknown[];
@@ -24,7 +24,7 @@ interface ISwaggerObject
     schemas?: object;
   }> {}
 
-const DEFAULT_CONFIG = {
+const DEFAULT_OPTIONS = {
   filePath: './routers/*/',
   fileName: 'swagger.@(yaml|yml|json)',
 };
@@ -47,10 +47,10 @@ const extractObjectFromFile = (pathToFile: string) => {
   return {};
 };
 
-const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
+const swaggerLoader = (relativePath = __dirname, options = DEFAULT_OPTIONS) => {
   return async () => {
     // load base file
-    const baseSwaggerPath = path.resolve(__dirname, '../../config/swagger', config.fileName);
+    const baseSwaggerPath = path.resolve(__dirname, '../../config/swagger', options.fileName);
     const swaggerBasePaths = glob.sync(baseSwaggerPath);
 
     if (swaggerBasePaths.length === 0) {
@@ -63,11 +63,11 @@ const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     // add server path
     baseSwaggerFile.servers = [
       ...(baseSwaggerFile.servers ?? []),
-      { url: swaggerConfig.serverURL },
+      { url: config.global.swagger.serverURL },
     ];
 
     // load all files from app
-    const pathToAllSwaggerFiles = path.resolve(relativePath, config.filePath, config.fileName);
+    const pathToAllSwaggerFiles = path.resolve(relativePath, options.filePath, options.fileName);
     const foundSwaggerFilePaths = glob.sync(pathToAllSwaggerFiles);
     const foundSwaggerFiles = foundSwaggerFilePaths
       .map<ISwaggerFileObject | null>((sp) => {

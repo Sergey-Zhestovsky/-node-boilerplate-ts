@@ -2,14 +2,14 @@ import { Express } from 'express';
 import swaggerUi, { JsonObject } from 'swagger-ui-express';
 
 import { Client404Error } from '@/libs/server-responses';
-import swaggerConfig from '@/config/swagger/swagger.config';
+import { config } from '@/libs/config';
 
 export const swaggerMiddleware = (
   app: Express,
   swagger: () => Promise<JsonObject | null>,
   urlPath: string = '/swagger'
 ) => {
-  if (!swaggerConfig.withSwagger) return;
+  if (!config.global.swagger.withSwagger) return;
   app.use(urlPath, swaggerUi.serve);
   const swaggerPromise = swagger();
 

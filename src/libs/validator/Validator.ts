@@ -1,34 +1,26 @@
-import Joi, { Root, ValidationOptions, SchemaMap } from 'joi';
+import Joi, { ValidationOptions } from 'joi';
 
-import validationErrorMessages from '../data/validation-errors.json';
-
-export interface IValidatorConfig extends ValidationOptions {
-  required?: boolean;
-}
-
-export type TSchemaContainer = ((joi: Root) => SchemaMap | string[]) | SchemaMap | string[];
-
-export interface IValidationResult<T = unknown> {
-  value: T;
-  errors: Record<string, string> | null;
-  errorMessage: string | null;
-}
+import { extensionFactory, IExtendedValidator } from './extensions';
+import { IValidationResult, IValidatorConfig, TSchemaContainer } from './types';
+import validationErrorMessages from '@/data/validation-errors.json';
 
 export class Validator {
   private schema: Joi.ObjectSchema | null;
   private config: ValidationOptions;
+  public readonly joi: IExtendedValidator;
 
   constructor() {
     this.schema = null;
     this.config = this.getDefaultConfig();
+    this.joi = Joi.extend(...extensionFactory);
   }
 
-  getDefaultConfig(): ValidationOptions {
+  private getDefaultConfig(): ValidationOptions {
     return {
       abortEarly: false,
       convert: true,
       presence: 'required',
-      allowUnknown: true,
+      stripUnknown: true,
     };
   }
 
@@ -48,13 +40,13 @@ export class Validator {
     this.config = { ...this.config, ...validatorConfig };
   }
 
-  setSchema(schema: TSchemaContainer, config: IValidatorConfig = this.getDefaultConfig()) {
-    this.setConfig(config);
+  setSchema(schema: TSchemaContainer, config?: IValidatorConfig) {
+    if (config) this.setConfig(config);
 
     let retrievedSchema: string[] | Joi.SchemaMap;
 
     if (schema instanceof Function) {
-      retrievedSchema = schema(Joi);
+      retrievedSchema = schema(this.joi);
     } else {
       retrievedSchema = schema;
     }

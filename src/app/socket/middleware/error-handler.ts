@@ -4,8 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { ClientError, Client401Error, Client500Error } from '@/libs/server-responses/ClientError';
 import { ClientRedirection, ServerError } from '@/libs/server-responses';
 import { logger } from '@/libs/Logger';
-
-import env from '@/data/env.json';
+import { config } from '@/libs/config';
 
 events.captureRejections = true;
 
@@ -25,7 +24,7 @@ const handleError = (error: Error, socket: Socket) => {
   const serverError = new ServerError(error);
   logger.error(`Unhandled error: '${error.name}': '${error.message}'.\n${error.stack ?? ''}`);
 
-  if (process.env.NODE_ENV === env.DEVELOPMENT) {
+  if (config.isDevelopment()) {
     socket.emit('error', serverError.getError());
   } else {
     socket.emit('error', new Client500Error().getError());

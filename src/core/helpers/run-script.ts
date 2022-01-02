@@ -2,8 +2,8 @@
 
 import 'colors';
 
-import envLoader from '../loaders/environment.loader';
-import env from '@/data/env.json';
+import './setup-modules';
+import { envLoader, environment, ENodeEnv } from '@/libs/config/Environment';
 
 type TScript = (args: string[]) => Promise<string | void> | string | void;
 
@@ -14,26 +14,28 @@ type TScript = (args: string[]) => Promise<string | void> | string | void;
 const run = async (args: string[]) => {
   const passedArgs = args.slice(2);
   const scriptName = passedArgs[0];
-  let environment = passedArgs[1];
+  const envFromArgs = passedArgs[1];
   const scriptArgs = passedArgs.slice(2);
 
-  if (!scriptName) return console.log('Script name is required.');
-
-  if (!environment || !Object.values(env).includes(environment)) {
-    console.log(
-      `Node environment is not passed. Assumes '${env.DEVELOPMENT}' as default environment.\n`
-        .yellow
-    );
-    environment = env.DEVELOPMENT;
+  if (!scriptName) {
+    return console.log('Script name is required.'.red);
   }
 
-  envLoader(`.env.${environment}`);
+  let chosenEnv = envFromArgs ? environment.getNodeEnv(envFromArgs) : undefined;
+
+  if (!chosenEnv) {
+    const warn = `Node environment is not passed. Assumes '${ENodeEnv.DEVELOPMENT}' as default environment.\n`;
+    console.log(warn.yellow);
+    chosenEnv = ENodeEnv.DEVELOPMENT;
+  }
+
+  envLoader(chosenEnv);
 
   let script;
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    script = (require(`../../scripts/${scriptName}`) as RequireDefaultModule<TScript>).default;
+    script = (require(`@/scripts/${scriptName}`) as RequireDefaultModule<TScript>).default;
   } catch (error) {
     return console.log(`Script with name: '${scriptName}' not found in src/scripts/ dir.`);
   }

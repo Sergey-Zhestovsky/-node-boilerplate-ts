@@ -1,3 +1,3 @@
-import envLoader from '../loaders/environment.loader';
+import { envLoader } from '@/libs/config/Environment';
 
 envLoader();

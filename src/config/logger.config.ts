@@ -1,11 +1,11 @@
 import path from 'path';
 
-import env from '../data/env.json';
+import { ENodeEnv, TNodeEnv } from '@/libs/config';
 
 const config = {
   logPath: path.join(__dirname, '../../logs'),
   console: {
-    blackListModes: [env.TEST],
+    blackListModes: [ENodeEnv.TEST] as TNodeEnv[],
   },
   fileTransport: {
     datePattern: 'DD-MM-YYYY',

@@ -6,14 +6,12 @@ import compression from 'compression';
 import morgan from 'morgan';
 
 import { logger } from '@/libs/Logger';
+import { config } from '@/libs/config';
 import { mutateQuery } from './utils/query-mutator';
 
-import corsConfig from '@/config/cors.config';
-import helmetConfig from '@/config/helmet.config';
-
 const setupCors = (): RequestHandler => {
-  if (!corsConfig.withCors) return (req, res, next) => next();
-  return cors(corsConfig.config);
+  if (!config.global.cors.withCors) return (req, res, next) => next();
+  return cors(config.global.cors.config);
 };
 
 const mutateQueryMiddleware = (): RequestHandler => (req, res, next) => {
@@ -23,7 +21,7 @@ const mutateQueryMiddleware = (): RequestHandler => (req, res, next) => {
 
 export const entry = [
   setupCors(),
-  helmet(helmetConfig),
+  helmet(config.global.helmet),
   express.urlencoded({ extended: false }),
   express.json({ limit: '150kb' }),
   cookieParser(),

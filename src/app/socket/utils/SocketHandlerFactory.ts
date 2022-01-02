@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { Server, Socket } from 'socket.io';
 
-import { Validator } from '@/libs/Validator';
+import { Validator } from '@/libs/validator';
 import { Client400Error, Client500Error } from '@/libs/server-responses';
 import SocketHandler from './SocketHandler';
 

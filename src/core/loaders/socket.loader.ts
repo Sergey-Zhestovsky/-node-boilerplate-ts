@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { Server, Socket } from 'socket.io';
 
 import { logger } from '@/libs/Logger';
-import socketConfig from '@/config/socket.config';
+import { config } from '@/libs/config';
 
 interface ISocketFile<T = unknown> {
   module: T;
@@ -31,7 +31,7 @@ interface IHandlerFactory {
   inject(socket: Socket): void;
 }
 
-interface IDefaultConfig<T> {
+interface IDefaultOptions<T> {
   pathPattern: string;
   filesStructure: {
     middleware: {
@@ -47,7 +47,7 @@ interface IDefaultConfig<T> {
   socketHandlerFactory: (new (server: Server, handlers: T[]) => IHandlerFactory) | null;
 }
 
-const DEFAULT_CONFIG: IDefaultConfig<unknown> = {
+const DEFAULT_OPTIONS: IDefaultOptions<unknown> = {
   /** relative folder path to file */
   pathPattern: './socket',
   filesStructure: {
@@ -117,9 +117,9 @@ const applyControllers = (
 
 const socketLoader = <T = unknown>(
   relativePath = __dirname,
-  config: Partial<IDefaultConfig<T>> = DEFAULT_CONFIG
+  options: Partial<IDefaultOptions<T>> = DEFAULT_OPTIONS
 ) => {
-  const fullConfig: IDefaultConfig<T> = _.merge({}, DEFAULT_CONFIG, config);
+  const fullConfig: IDefaultOptions<T> = _.merge({}, DEFAULT_OPTIONS, options);
   const rootPath = path.resolve(relativePath, fullConfig.pathPattern);
 
   // get (import) all files
@@ -155,12 +155,12 @@ const socketLoader = <T = unknown>(
 
   // create and assemble server
   return (httpServer: http.Server) => {
-    const io = new Server(httpServer, socketConfig);
+    const io = new Server(httpServer, config.global.socket);
 
     let socketHandlerFactory: IHandlerFactory | null = null;
 
-    if (config.socketHandlerFactory) {
-      socketHandlerFactory = new config.socketHandlerFactory(io, handlerFiles);
+    if (options.socketHandlerFactory) {
+      socketHandlerFactory = new options.socketHandlerFactory(io, handlerFiles);
     }
 
     // apply server middleware

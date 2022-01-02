@@ -7,7 +7,7 @@ import {
   ClientRedirection,
   IPublicError,
 } from '@/libs/server-responses';
-import env from '@/data/env.json';
+import { config } from '@/libs/config';
 
 type TResultData = ClientRedirection | object | string | null;
 type TErrorData = ClientError | TResultData;
@@ -31,7 +31,7 @@ const handleResponse: THandleResponse = (result, error) => {
 
   if (error !== null) {
     if (error instanceof ServerError) {
-      if (process.env.NODE_ENV !== env.DEVELOPMENT) error.removeStack();
+      if (!config.isDevelopment()) error.removeStack();
       clientError = error;
     } else if (error instanceof ClientError) {
       clientError = error;

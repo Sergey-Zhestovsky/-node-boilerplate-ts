@@ -160,7 +160,11 @@ module.exports = {
     'no-whitespace-before-property': ERROR,
     'object-curly-newline': [ERROR, { consistent: true }],
     'object-curly-spacing': [ERROR, 'always'],
-    'operator-linebreak': [ERROR, 'none', { overrides: { '?': 'before', ':': 'before' } }],
+    'operator-linebreak': [
+      ERROR,
+      'none',
+      { overrides: { '?': 'before', ':': 'before', '&&': 'after', '||': 'after' } },
+    ],
     'padded-blocks': [ERROR, 'never'],
     'padding-line-between-statements': [
       ERROR,
@@ -229,7 +233,7 @@ module.exports = {
             default: 'array-simple',
           },
         ],
-        '@typescript-eslint/await-thenable': ERROR,
+        '@typescript-eslint/await-thenable': OFF, // ERROR
         '@typescript-eslint/ban-ts-comment': [
           ERROR,
           {

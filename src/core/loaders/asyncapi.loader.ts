@@ -9,7 +9,7 @@ import yaml from 'js-yaml';
 import _ from 'lodash';
 
 import { logger } from '@/libs/Logger';
-import asyncapiConfig from '@/config/asyncapi/asyncapi.config';
+import { config } from '@/libs/config';
 
 interface IAsyncApiFileObject<T = object> {
   tags?: unknown[];
@@ -33,7 +33,7 @@ export interface IFileContract {
 
 export type TAsyncApiResponse = () => Promise<IPathContract | IFileContract | null>;
 
-const DEFAULT_CONFIG = {
+const DEFAULT_OPTIONS = {
   tempFileFolder: path.resolve(__dirname, '../../../temp/temp-async-api'),
   filePath: './socket/{docs/,namespaces/docs}',
   fileName: '*asyncapi.@(yaml|yml|json)',
@@ -60,11 +60,11 @@ const extractObjectFromFile = (pathToFile: string, preprocessor = (file: string)
   return {};
 };
 
-const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG): TAsyncApiResponse => {
+const asyncAPILoader = (relativePath = __dirname, options = DEFAULT_OPTIONS): TAsyncApiResponse => {
   return async () => {
     // assemble asyncapi doc
     // get base file
-    const baseAsyncapiPath = path.resolve(__dirname, '../../config/asyncapi', config.fileName);
+    const baseAsyncapiPath = path.resolve(__dirname, '../../config/asyncapi', options.fileName);
     const existedAsyncapiBasePaths = glob.sync(baseAsyncapiPath);
 
     if (existedAsyncapiBasePaths.length === 0) {
@@ -74,12 +74,12 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG): TAsy
 
     const baseAsyncapiFile = extractObjectFromFile(existedAsyncapiBasePaths[0], (doc) => {
       return doc.replace(/\{\{(.+?)\}\}/g, (origin, variable: string) => {
-        return (asyncapiConfig.vars[variable] as string | undefined) ?? origin;
+        return (config.global.asyncapi.vars[variable] as string | undefined) ?? origin;
       });
     });
 
     // get all spec files
-    const pathToAllAsyncapiFiles = path.resolve(relativePath, config.filePath, config.fileName);
+    const pathToAllAsyncapiFiles = path.resolve(relativePath, options.filePath, options.fileName);
     const foundAsyncapiFilePaths = glob.sync(pathToAllAsyncapiFiles);
     const foundAsyncapiFiles = foundAsyncapiFilePaths.map((aa) => {
       const obj: IAsyncApiFileObject = extractObjectFromFile(aa);
@@ -125,27 +125,27 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG): TAsy
     // create new static file, save it in memory
     // loading optimization
     const Generator = require('@asyncapi/generator');
-    const generator = new Generator('@asyncapi/html-template', config.tempFileFolder, {
+    const generator = new Generator('@asyncapi/html-template', options.tempFileFolder, {
       entrypoint: 'index.html',
     });
 
-    fs.rmSync(config.tempFileFolder, { recursive: true, force: true });
+    fs.rmSync(options.tempFileFolder, { recursive: true, force: true });
     generator.asyncapi = validAsyncapi;
     await generator.generate(validAsyncapi);
 
     // add new styles
-    const pathToAsyncapiResFile = path.join(config.tempFileFolder, 'index.html');
+    const pathToAsyncapiResFile = path.join(options.tempFileFolder, 'index.html');
     let asyncapiHTML = fs.readFileSync(pathToAsyncapiResFile).toString();
 
     asyncapiHTML = asyncapiHTML.replace(
       /( *)(<link href="css\/styles.min.css" rel="stylesheet">)/,
       (origin, shift) => {
-        return `${origin}\n\n${shift}<style>\n${shift}  ${config.style}\n${shift}</style>\n`;
+        return `${origin}\n\n${shift}<style>\n${shift}  ${options.style}\n${shift}</style>\n`;
       }
     );
 
-    if (config.inMemory) {
-      fs.rmSync(config.tempFileFolder, { recursive: true, force: true });
+    if (options.inMemory) {
+      fs.rmSync(options.tempFileFolder, { recursive: true, force: true });
       return { file: asyncapiHTML };
     }
 

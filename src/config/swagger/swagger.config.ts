@@ -1,4 +1,7 @@
+import { environment } from '@/libs/config';
+import { getServerDomain } from '@/utils';
+
 export default {
-  withSwagger: process.env.SWAGGER === 'on',
-  serverURL: process.env.SWAGGER_SERVER_URL,
+  withSwagger: environment.vars.SWAGGER === 'on',
+  serverURL: environment.vars.SWAGGER_SERVER_URL?.href ?? getServerDomain(),
 };
