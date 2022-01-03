@@ -1,11 +1,13 @@
 import { logger } from '@/libs/Logger';
+import { config, IProcessEnv } from '@/libs/config';
+import { trimObject } from '@/utils';
 
 const debug = logger.getDebug('service:health');
 
 export interface IServerStatus {
   status: string;
   started: boolean;
-  environment?: Record<string, string>;
+  environment?: IProcessEnv;
 }
 
 export class HealthService {
@@ -15,10 +17,10 @@ export class HealthService {
     const result: IServerStatus = {
       status: 'OK',
       started: true,
+      environment: withEnvironment ? config.env : undefined,
     };
-    if (withEnvironment) result.environment = process.initialEnvironmentConfig;
 
     debug(`Get out pingController with status: '%s'`, result.status);
-    return result;
+    return trimObject(result);
   }
 }

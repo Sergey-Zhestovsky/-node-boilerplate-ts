@@ -1,7 +1,5 @@
-import * as env from './Environment';
+import { ENodeEnv, IProcessEnv, ITestProcessEnv, environment } from './Environment';
 
-const { ENodeEnv, environment } = env;
-
-export { ENodeEnv, environment };
+export { environment, ENodeEnv, IProcessEnv, ITestProcessEnv };
 export * from './Config';
 export * from './types';
