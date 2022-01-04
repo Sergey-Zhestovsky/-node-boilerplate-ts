@@ -1,0 +1,11 @@
+const path = require('path');
+
+const baseConfigPath = 'src/config';
+const baseDatabasePath = 'src/api/database';
+
+module.exports = {
+  'config': path.resolve(baseConfigPath, 'database.config.ts'),
+  'models-path': path.resolve(baseDatabasePath, 'models'),
+  'seeders-path': path.resolve(baseDatabasePath, 'seeders'),
+  'migrations-path': path.resolve(baseDatabasePath, 'migrations'),
+};

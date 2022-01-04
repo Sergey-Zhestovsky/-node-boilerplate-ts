@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { URL } from 'url';
 
 export interface IUrlStringExtend extends Joi.StringSchema {
   url(): this;

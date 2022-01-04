@@ -6,15 +6,15 @@ import http from 'http';
 
 import app from './express';
 import { socket } from './app';
-import db from './api/database';
+import { db } from './api/database';
 import rbac from './api/rbac';
 import { logger } from './libs/Logger';
 import { config } from './libs/config';
 import { getServerDomain } from './utils';
 
-const main = async (process: NodeJS.Process) => {
+const main = async () => {
   try {
-    await db.connection.connect();
+    await db.postgres.connect();
     await rbac.synchronize();
 
     const server = http.createServer(app);
@@ -32,4 +32,4 @@ const main = async (process: NodeJS.Process) => {
   }
 };
 
-void main(process);
+void main();

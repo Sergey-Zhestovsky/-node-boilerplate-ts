@@ -17,7 +17,7 @@
   "dependencies": {
     "@apidevtools/swagger-parser": "~10.0.3",
     "@asyncapi/generator": "~1.8.27",
-    "@asyncapi/html-template": "^0.20.1",
+    "@asyncapi/html-template": "^0.24.1",
     "@asyncapi/parser": "~1.13.1",
     "@graphql-tools/schema": "^8.3.1",
     "@graphql-tools/utils": "^8.5.5",
@@ -44,8 +44,11 @@
     "moment": "~2.29.1",
     "morgan": "~1.10.0",
     "openapi-types": "~10.0.0",
+    "pg": "^8.7.1",
+    "sequelize": "^7.0.0-alpha.4",
     "socket.io": "~4.4.0",
     "swagger-ui-express": "~4.3.0",
+    "umzug": "^3.0.0",
     "uuid": "~8.3.2",
     "winston": "~3.3.3",
     "winston-daily-rotate-file": "~4.5.5"

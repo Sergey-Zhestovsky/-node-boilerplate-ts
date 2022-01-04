@@ -257,7 +257,7 @@ module.exports = {
             },
           },
         ],
-        '@typescript-eslint/brace-style': [ERROR, '1tbs'],
+        '@typescript-eslint/brace-style': [OFF, '1tbs'],
         '@typescript-eslint/camelcase': OFF,
         '@typescript-eslint/comma-spacing': [ERROR],
         '@typescript-eslint/consistent-type-assertions': [

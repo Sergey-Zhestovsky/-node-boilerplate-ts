@@ -4,6 +4,7 @@ import 'colors';
 
 import path from 'path';
 import dotenv from 'dotenv';
+import { URL } from 'url';
 
 import { Validator, IExtendedValidator } from '@/libs/validator';
 import nodeEnv from '@/data/env.json';

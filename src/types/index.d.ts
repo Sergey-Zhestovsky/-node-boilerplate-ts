@@ -41,3 +41,5 @@ interface ServerResponse<Res = null, Err = null> {
 }
 
 interface ServerErrorResponse<Err = null> extends ServerResponse<null, Err> {}
+
+type MaybePromise<T> = Promise<T> | T;
