@@ -44,7 +44,7 @@ export class ClientError<Descriptor = unknown> extends Error {
     let origin = { ...originErrorObject };
 
     if (typeof override === 'object') origin = { ...origin, ...override };
-    else origin.message = override;
+    else if (typeof override === 'string') origin.message = override;
 
     return origin;
   }
@@ -56,7 +56,7 @@ export class ClientError<Descriptor = unknown> extends Error {
   public readonly type: string;
   public readonly status: number;
   public readonly userMessage: string | null;
-  public readonly descriptor: Descriptor | null;
+  public readonly descriptor?: Descriptor;
   public readonly date: string;
 
   constructor({ type, status, message, descriptor }: IClientError<Descriptor>) {
@@ -65,7 +65,7 @@ export class ClientError<Descriptor = unknown> extends Error {
     this.type = type ?? clientErrors.InternalServerError.type;
     this.status = status ?? clientErrors.InternalServerError.status;
     this.userMessage = message ?? null;
-    this.descriptor = descriptor ?? null;
+    this.descriptor = descriptor;
     this.date = new Date().toISOString();
   }
 

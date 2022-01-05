@@ -7,13 +7,13 @@ declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: string;
   }
-
-  interface Process {
-    initialEnvironmentConfig: Record<string, string>;
-  }
 }
 
 declare namespace Express {
+  interface Request {
+    session: import('../api/auth/Session').Session;
+  }
+
   interface Response {
     return(val?: object | string | null, error?: object): void;
     throw(error?: object): void;

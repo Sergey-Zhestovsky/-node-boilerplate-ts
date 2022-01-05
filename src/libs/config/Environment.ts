@@ -20,6 +20,9 @@ interface IBaseProcessEnv {
   DB_URL: URL;
   DB_NAME: string;
 
+  // Auth
+  AUTH_SERVER_SECRET: string;
+
   // Swagger
   SWAGGER: 'on' | 'off';
   SWAGGER_SERVER_URL?: URL;
@@ -53,6 +56,7 @@ class Environment {
       HOST: joi.string().optional(),
       DB_URL: joi.string().url(),
       DB_NAME: joi.string(),
+      AUTH_SERVER_SECRET: joi.string(),
       SWAGGER: onOffSchema,
       SWAGGER_SERVER_URL: joi.string().url().optional(),
       ASYNCAPI: onOffSchema,

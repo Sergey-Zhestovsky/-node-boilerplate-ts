@@ -7,6 +7,7 @@ import morgan from 'morgan';
 
 import { logger } from '@/libs/Logger';
 import { config } from '@/libs/config';
+import { passportAuthenticate } from './passport-authenticate';
 import { mutateQuery } from './utils/query-mutator';
 
 const setupCors = (): RequestHandler => {
@@ -28,4 +29,5 @@ export const entry = [
   compression(),
   morgan(logger.middlewareOutput, { stream: logger.stream() }),
   mutateQueryMiddleware(),
+  passportAuthenticate(),
 ];
