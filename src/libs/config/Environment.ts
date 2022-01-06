@@ -8,6 +8,7 @@ import { URL } from 'url';
 
 import { Validator, IExtendedValidator } from '@/libs/validator';
 import nodeEnv from '@/data/env.json';
+import { ELogLevel } from '@/types/logger';
 import { TNodeEnv, TEnumNodeEnv } from './types';
 
 interface IBaseProcessEnv {
@@ -15,6 +16,11 @@ interface IBaseProcessEnv {
 
   PORT?: number;
   HOST?: string;
+
+  // Logging
+  DEBUG?: string;
+  LOGGING_FILE_LEVEL?: ELogLevel;
+  LOGGING_CONSOLE_LEVEL?: ELogLevel;
 
   // Database connection
   DB_URL: URL;
@@ -44,22 +50,25 @@ let envLoader: (forEnv?: TNodeEnv) => void;
 
 class Environment {
   static getValidationSchema(forNodeEnv: TNodeEnv, joi: IExtendedValidator) {
-    const onOffSchema = joi
-      .string()
-      .pattern(/^(on)|(off)$/)
-      .message(`{{#label}} must be one of the values: 'on', 'off'.`)
-      .default('off');
-
     return {
       NODE_ENV: joi.string(),
-      PORT: joi.number().optional(),
-      HOST: joi.string().optional(),
+
+      PORT: joi.number().empty('').optional(),
+      HOST: joi.string().empty('').optional(),
+
+      DEBUG: joi.string().empty('').optional(),
+      LOGGING_FILE_LEVEL: joi.string().oneOf(Object.values(ELogLevel)).empty('').optional(),
+      LOGGING_CONSOLE_LEVEL: joi.string().oneOf(Object.values(ELogLevel)).empty('').optional(),
+
       DB_URL: joi.string().url(),
       DB_NAME: joi.string(),
+
       AUTH_SERVER_SECRET: joi.string(),
-      SWAGGER: onOffSchema,
+
+      SWAGGER: joi.string().oneOf(['on', 'off']).default('off'),
       SWAGGER_SERVER_URL: joi.string().url().optional(),
-      ASYNCAPI: onOffSchema,
+
+      ASYNCAPI: joi.string().oneOf(['on', 'off']).default('off'),
       ASYNCAPI_PUBLIC_URL: joi.string().url().optional(),
     };
   }

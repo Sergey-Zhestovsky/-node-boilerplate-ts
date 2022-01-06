@@ -5,136 +5,142 @@ import debug from 'debug';
 import winston, { Logform } from 'winston';
 import moment, { Moment } from 'moment';
 import DailyRotateFile from 'winston-daily-rotate-file';
+import util from 'util';
 
 import { config } from '@/libs/config';
+import { cleanStack, stripAnsi } from '@/utils';
+import { ELogLevel, ILogEntry, TLogEntryType } from '@/types/logger';
 
-export interface ILoggerInfo extends Logform.TransformableInfo {
-  code?: string;
+interface ILoggerInfo extends Logform.TransformableInfo {
+  timestamp?: string;
   stack?: string;
-  timestamp: string;
 }
 
-export type TFileTransportConfig = Omit<
-  DailyRotateFile.GeneralDailyRotateFileTransportOptions,
-  'stream'
->;
+type TTimeFormatter = (timestamp: number | string | Date | Moment) => string;
+
+type TLogLevelSeverities = {
+  [k in keyof typeof ELogLevel]: number;
+};
 
 class Logger {
-  static get Info() {
+  static get LogLevelSeverities(): TLogLevelSeverities {
     return {
-      message: Symbol.for('message'),
-      level: Symbol.for('level'),
+      Debug: 0,
+      Info: 1,
+      Warn: 2,
+      Error: 3,
     };
   }
 
-  static assembleLogOutput(
-    info: ILoggerInfo,
-    parseArgs = true,
-    getTime = (timestamp: string, logInfo: ILoggerInfo): string => timestamp
-  ) {
-    const { timestamp, level, message, code, stack, ...args } = info;
-    const ts = getTime(timestamp, info);
-    let output = message;
+  static getSeverityLevel(level: keyof typeof ELogLevel | ELogLevel) {
+    let keyLevel: keyof typeof ELogLevel | undefined;
 
-    if (code) output += `\ncode: ${code}`;
-    if (stack) output += `\n${stack}`;
-    if (parseArgs && Object.keys(args).length) output += `\n ${JSON.stringify(args, null, 2)}`;
-
-    return `[${level}] :: ${ts} :: ${output}`;
-  }
-
-  static getFormat(parseArgs = true) {
-    const timeFormatter = (timestamp: string | Date | Moment) => {
-      return moment(timestamp).format('YYYY-MM-DD HH:mm:ss (Z)');
-    };
-
-    const printf = (info: Logform.TransformableInfo) => {
-      const content = info[Logger.Info.message as unknown as string]
-        ? info[Logger.Info.message as unknown as string]
-        : info;
-
-      return Logger.assembleLogOutput(content, parseArgs, timeFormatter);
-    };
-
-    return winston.format.combine(winston.format.timestamp(), winston.format.printf(printf));
-  }
-
-  static getFileTransport(
-    logPath: string,
-    level: string,
-    options: TFileTransportConfig = config.global.logger.fileTransport
-  ) {
-    return new DailyRotateFile({
-      level: level,
-      format: Logger.getFormat(),
-      ...options,
-      filename: path.join(logPath, level, `${level}-%DATE%.log`),
+    Object.entries(ELogLevel).forEach(([key, val]) => {
+      if (key === level || val === level) keyLevel = key as keyof typeof ELogLevel;
     });
+
+    if (!keyLevel) return -1;
+    return Logger.LogLevelSeverities[keyLevel];
   }
 
-  static getDebugTransport(logPath: string) {
-    return Logger.getFileTransport(logPath, 'debug');
+  private static getPrintf(timeFormatter: TTimeFormatter = (ts) => ts.toString()) {
+    return (info: ILoggerInfo) => {
+      const { level, message, stack, timestamp } = info;
+      const formattedTs = timeFormatter(timestamp ?? Date.now());
+
+      let output = message;
+      if (stack) output += `\n${cleanStack(stack, { onlyFromProjectDir: true })}`;
+
+      return `[${level.toUpperCase()}] :: ${formattedTs} :: ${output}`;
+    };
   }
 
-  static getInfoTransport(logPath: string) {
-    return Logger.getFileTransport(logPath, 'info');
-  }
-
-  static getWarnTransport(logPath: string) {
-    return Logger.getFileTransport(logPath, 'warn');
-  }
-
-  static getErrorTransport(logPath: string) {
-    return Logger.getFileTransport(logPath, 'error');
-  }
-
-  static getConsoleTransport(parseArgs = true) {
-    const timeFormatter = (timestamp: string | Date | Moment) => {
-      return moment(timestamp).format('MM.DD.YYYY, HH:mm:ss').cyan;
+  private static getFileLogFormat() {
+    const timeFormatter: TTimeFormatter = (timestamp) => {
+      return moment.utc(timestamp).format('YYYY-MM-DD HH:mm:ss (Z)');
     };
 
-    const printf = (info: Logform.TransformableInfo) => {
-      const content = info[Logger.Info.message as unknown as string]
-        ? info[Logger.Info.message as unknown as string]
-        : info;
+    return winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.printf(Logger.getPrintf(timeFormatter))
+    );
+  }
 
-      return Logger.assembleLogOutput(content, parseArgs, timeFormatter);
+  private static getConsoleLogFormat() {
+    const timeFormatter: TTimeFormatter = (timestamp) => {
+      return moment(timestamp).format('HH:mm:ss').cyan;
     };
 
+    return winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.printf(Logger.getPrintf(timeFormatter)),
+      winston.format.colorize({ all: true })
+    );
+  }
+
+  private static getFileTransport(options: typeof config.global.logger) {
+    const getDailyRotate = (level: ELogLevel) => {
+      return new DailyRotateFile({
+        ...options.fileTransport,
+        level: level,
+        format: Logger.getFileLogFormat(),
+        filename: path.join(options.logPath, level, `${level}-%DATE%.log`),
+      });
+    };
+
+    const transports: DailyRotateFile[] = [];
+    const currentSeverity = Logger.getSeverityLevel(options.logFileLevel);
+
+    Object.entries(ELogLevel).forEach(([key, val]) => {
+      const targetSeverity = Logger.getSeverityLevel(key as keyof typeof ELogLevel);
+      if (targetSeverity >= currentSeverity) transports.push(getDailyRotate(val));
+    });
+
+    return transports;
+  }
+
+  private static getConsoleTransport() {
     return new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.printf(printf),
-        winston.format.colorize({ all: true })
-      ),
+      format: Logger.getConsoleLogFormat(),
     });
   }
 
-  static buildLogger(logPath: string, logInConsole = true) {
+  private static buildLogger(options: typeof config.global.logger) {
     const transports = [];
 
-    if (logPath) {
-      transports.push(Logger.getDebugTransport(logPath));
-      transports.push(Logger.getInfoTransport(logPath));
-      transports.push(Logger.getWarnTransport(logPath));
-      transports.push(Logger.getErrorTransport(logPath));
+    if (options.logPath) {
+      transports.push(...Logger.getFileTransport(options));
     }
 
-    if (logInConsole && !config.global.logger.console.blackListModes.includes(config.nodeEnv)) {
+    if (!options.console.blackListModes.includes(config.nodeEnv)) {
       transports.push(Logger.getConsoleTransport());
     }
 
     return winston.createLogger({
-      format: winston.format.printf((info) => info as unknown as string),
+      level: options.logConsoleLevel,
       transports,
     });
   }
 
   private readonly winston: winston.Logger;
-  private readonly debug: debug.Debugger;
+  private readonly debugger: debug.Debugger;
 
-  constructor(logPath = config.global.logger.logPath) {
-    this.winston = Logger.buildLogger(logPath);
-    this.debug = debug('app');
+  constructor(options = config.global.logger) {
+    this.winston = Logger.buildLogger(options);
+    this.debugger = this.setupDebugger('app');
+  }
+
+  private setupDebugger(namespace: string) {
+    const debugInstance = debug(namespace);
+
+    debugInstance.log = (...args: unknown[]) => {
+      const res = args.map((v) => (typeof v === 'string' ? stripAnsi(v) : v));
+      this.winston.debug(util.format(...res));
+      // eslint-disable-next-line no-console
+      console.log(...args);
+    };
+
+    return debugInstance;
   }
 
   get middlewareOutput() {
@@ -142,7 +148,7 @@ class Logger {
   }
 
   getDebug(namespace: string) {
-    return this.debug.extend(namespace);
+    return this.debugger.extend(namespace);
   }
 
   stream() {
@@ -153,20 +159,40 @@ class Logger {
     };
   }
 
-  log(level: string, message: string, ...args: any[]) {
-    this.winston.log(level, message, ...args);
+  private parseLogEntry(level: ELogLevel, entries: TLogEntryType[]): ILogEntry {
+    const logEntry: ILogEntry = {
+      level: level,
+      message: '',
+    };
+
+    const rowMessage: Array<Exclude<TLogEntryType, Error>> = [];
+
+    for (const data of entries) {
+      if (data instanceof Error) {
+        rowMessage.push(data.message);
+        logEntry.stack = data.stack;
+      } else {
+        rowMessage.push(data);
+      }
+    }
+
+    return { ...logEntry, message: util.format(...rowMessage) };
   }
 
-  error(message: string | Error, ...args: any[]) {
-    this.winston.error(message as string, ...args);
+  log(entry: ILogEntry) {
+    return this.winston.log(entry);
   }
 
-  warn(message: string, ...args: any[]) {
-    this.winston.warn(message, ...args);
+  info(...args: TLogEntryType[]) {
+    return this.log(this.parseLogEntry(ELogLevel.Info, args));
   }
 
-  info(message: string, ...args: any[]) {
-    this.winston.info(message, ...args);
+  warn(...args: TLogEntryType[]) {
+    return this.log(this.parseLogEntry(ELogLevel.Warn, args));
+  }
+
+  error(...args: TLogEntryType[]) {
+    return this.log(this.parseLogEntry(ELogLevel.Error, args));
   }
 }
 
