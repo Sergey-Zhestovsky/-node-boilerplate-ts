@@ -1,0 +1,11 @@
+{
+  "badRequest": "Bad request.",
+  "unauthorized": "Access denied: not authorized.",
+  "forbidden": "Access denied: wrong privilege.",
+  "notFound": "Not found.",
+  "conflict": "Conflict with the current state of the resource.",
+  "gone": "Resource is no longer available.",
+  "tooManyRequests": "Too many requests.",
+  "internalServerError": "Internal server error.",
+  "accessToken": "Access token is expired."
+}

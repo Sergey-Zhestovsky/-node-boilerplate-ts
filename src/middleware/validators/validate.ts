@@ -3,6 +3,7 @@ import { RequestHandler } from 'express';
 
 import { Dto } from '@/core/models/Dto';
 import { Validator, TSchemaContainer } from '@/libs/validator';
+import { ENamespace, localization } from '@/libs/localization';
 import { Client400Error } from '@/libs/server-responses';
 import { classOf } from '@/utils';
 
@@ -23,7 +24,12 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
     );
 
     const requestHandler: RequestHandler<unknown, unknown, unknown, unknown> = (req, res, next) => {
-      const validationResult = validator.validate(req[requestProperty]);
+      const validationResult = validator.validate(req[requestProperty], {
+        messages: localization.getResourceBundle(
+          req.session.connection.language,
+          ENamespace.ValidationErrors
+        ) as Record<string, string>,
+      });
 
       if (validationResult === null) {
         return next();

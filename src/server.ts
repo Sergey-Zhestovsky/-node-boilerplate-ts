@@ -8,12 +8,14 @@ import app from './express';
 import { socket } from './app';
 import { db } from './api/database';
 import rbac from './api/rbac';
+import { localization } from './libs/localization';
 import { logger } from './libs/Logger';
 import { config } from './libs/config';
 import { getServerDomain } from './utils';
 
 const main = async () => {
   try {
+    await localization.init();
     await db.postgres.connect();
     await rbac.synchronize();
 

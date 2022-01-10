@@ -2,7 +2,6 @@ import Joi, { ValidationOptions } from 'joi';
 
 import { extensionFactory, IExtendedValidator } from './extensions';
 import { IValidationResult, IValidatorConfig, TSchemaContainer } from './types';
-import validationErrorMessages from '@/data/validation-errors.json';
 
 export class Validator {
   private schema: Joi.ObjectSchema | null;
@@ -25,11 +24,10 @@ export class Validator {
   }
 
   setConfig(config: IValidatorConfig) {
-    const { required = true, messages = {}, errors = {}, ...rest } = config;
+    const { required = true, errors = {}, ...rest } = config;
 
     const validatorConfig: ValidationOptions = {
       presence: required ? 'required' : 'optional',
-      messages: { ...validationErrorMessages, ...messages },
       errors: {
         wrap: { label: `'` },
         ...errors,
@@ -62,8 +60,9 @@ export class Validator {
     return this;
   }
 
-  validate<T>(data: unknown): IValidationResult<T> | null {
+  validate<T>(data: unknown, config?: IValidatorConfig): IValidationResult<T> | null {
     if (!this.schema) return null;
+    if (config) this.setConfig(config);
 
     const result = this.schema.validate(data, this.config);
     let errors: Record<string, string> | null = null;

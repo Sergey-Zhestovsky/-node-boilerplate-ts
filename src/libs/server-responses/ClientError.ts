@@ -1,28 +1,16 @@
+import { localization } from '../localization';
 import { trimObject } from '@/utils';
-import clientErrors from '@/data/client-errors.json';
-import { EClientErrorType } from './client-error-type';
-
-interface IBaseClientError {
-  type: string;
-  status: number;
-  message: string;
-}
-
-interface IClientError<T = unknown> extends Partial<IBaseClientError> {
-  descriptor?: T;
-}
+import { EClientErrorType, baseErrors, clientErrors } from './client-errors';
+import { baseClientErrorClassBuilder, customClientErrorClassBuilder } from './error-class-builder';
+import { IClientError, IPublicError } from './types';
 
 type TClientErrorVariant = ClientError | Error | Record<string, string> | string;
 
-export interface IPublicError<T = unknown> {
-  type: string;
-  status: number;
-  message?: string;
-  descriptor?: T;
-  date: string;
-}
+type TCustomClientErrorClass = ReturnType<ReturnType<typeof customClientErrorClassBuilder>>;
 
 export class ClientError<Descriptor = unknown> extends Error {
+  private static customClientErrors: Record<keyof typeof clientErrors, TCustomClientErrorClass>;
+
   static create(error: TClientErrorVariant, description?: string) {
     if (error instanceof ClientError) {
       return error;
@@ -53,6 +41,10 @@ export class ClientError<Descriptor = unknown> extends Error {
     return EClientErrorType;
   }
 
+  static get from() {
+    return this.customClientErrors;
+  }
+
   public readonly type: string;
   public readonly status: number;
   public readonly userMessage: string | null;
@@ -62,14 +54,22 @@ export class ClientError<Descriptor = unknown> extends Error {
   constructor({ type, status, message, descriptor }: IClientError<Descriptor>) {
     super(message);
 
-    this.type = type ?? clientErrors.InternalServerError.type;
-    this.status = status ?? clientErrors.InternalServerError.status;
+    this.type = type ?? baseErrors.InternalServerError.type;
+    this.status = status ?? baseErrors.InternalServerError.status;
     this.userMessage = message ?? null;
     this.descriptor = descriptor;
     this.date = new Date().toISOString();
   }
 
-  protected getRawError() {
+  static {
+    const buildErrorClass = customClientErrorClassBuilder(this);
+
+    this.customClientErrors = Object.fromEntries(
+      Object.entries(clientErrors).map(([key, clientError]) => [key, buildErrorClass(clientError)])
+    ) as Record<keyof typeof clientErrors, TCustomClientErrorClass>;
+  }
+
+  protected getRawError(): IPublicError {
     return {
       type: this.type,
       status: this.status,
@@ -79,26 +79,26 @@ export class ClientError<Descriptor = unknown> extends Error {
     };
   }
 
-  getError() {
-    return trimObject(this.getRawError()) as IPublicError<Descriptor>;
+  getError(localizeMessageLng?: string) {
+    const rawError = this.getRawError();
+
+    if (localizeMessageLng && rawError.message) {
+      rawError.message = localization.translateStr(rawError.message, localizeMessageLng);
+    }
+
+    return trimObject(rawError);
   }
 }
 
-const buildErrorClass = (defaultOptions: IBaseClientError) => {
-  return class <Descriptor = unknown> extends ClientError<Descriptor> {
-    constructor(paramsOrMessage?: IClientError<Descriptor> | string) {
-      super(ClientError.construct(defaultOptions, paramsOrMessage));
-    }
-  };
-};
+const buildErrorClass = baseClientErrorClassBuilder(ClientError);
 
-export const Client400Error = buildErrorClass(clientErrors.BadRequest);
-export const Client401Error = buildErrorClass(clientErrors.Unauthorized);
-export const Client403Error = buildErrorClass(clientErrors.Forbidden);
-export const Client404Error = buildErrorClass(clientErrors.NotFound);
-export const Client409Error = buildErrorClass(clientErrors.Conflict);
-export const Client410Error = buildErrorClass(clientErrors.Gone);
-export const Client429Error = buildErrorClass(clientErrors.TooManyRequests);
-export const Client500Error = buildErrorClass(clientErrors.BadRequest);
+export const Client400Error = buildErrorClass(baseErrors.BadRequest);
+export const Client401Error = buildErrorClass(baseErrors.Unauthorized);
+export const Client403Error = buildErrorClass(baseErrors.Forbidden);
+export const Client404Error = buildErrorClass(baseErrors.NotFound);
+export const Client409Error = buildErrorClass(baseErrors.Conflict);
+export const Client410Error = buildErrorClass(baseErrors.Gone);
+export const Client429Error = buildErrorClass(baseErrors.TooManyRequests);
+export const Client500Error = buildErrorClass(baseErrors.BadRequest);
 
 export default ClientError;

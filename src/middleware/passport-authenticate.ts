@@ -23,13 +23,15 @@ const defaultCb: TWrappedPassportCallback = (req, res, next) => (err, user, info
 
 export const passportAuthenticate = (callback: TWrappedPassportCallback = defaultCb) => {
   return ((req, res, next) => {
-    return passport.authenticate(
-      EPassportStrategy.JWT,
-      {
-        session: false,
-        failWithError: false,
-      },
-      callback(req, res, next)
-    ) as RequestHandler;
+    return (
+      passport.authenticate(
+        EPassportStrategy.JWT,
+        {
+          session: false,
+          failWithError: false,
+        },
+        callback(req, res, next)
+      ) as RequestHandler
+    )(req, res, next);
   }) as RequestHandler;
 };

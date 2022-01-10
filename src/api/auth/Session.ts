@@ -1,13 +1,17 @@
 import { Request } from 'express';
 import parseUserAgent, { IResult as IUserAgent } from 'ua-parser-js';
+import Negotiator from 'negotiator';
 
 import { IJwtPayload } from '@/types/auth';
 import { retrieveIpAddress } from '@/utils';
+import { negotiateRequest } from './process-request';
 import { DecodedJwt } from './strategies/jwt-strategy/DecodedJwt';
 
 interface ISessionConnection<T> {
   ip: string;
   userAgent: IUserAgent;
+  negotiate: Negotiator;
+  language: string;
   origin: T | null;
 }
 
@@ -38,6 +42,7 @@ export class Session<
     const connection: ISessionConnection<IDecodedJwtOrigin<P>> = {
       ip: retrieveIpAddress(req),
       userAgent: parseUserAgent(req.headers['user-agent']),
+      ...negotiateRequest(req),
       origin: {
         payload: decodedJwt?.payload ?? null,
         token: decodedJwt?.token ?? null,
