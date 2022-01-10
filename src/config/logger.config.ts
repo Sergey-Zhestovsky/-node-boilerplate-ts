@@ -1,7 +1,7 @@
 import path from 'path';
 
 import { environment, ENodeEnv, TNodeEnv } from '@/libs/config';
-import { ELogLevel } from '@/types/logger';
+import { ELogLevel } from '@/libs/logger/types';
 
 const config = {
   logPath: path.join(__dirname, '../../logs'),

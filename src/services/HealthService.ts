@@ -1,4 +1,4 @@
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { config, IProcessEnv } from '@/libs/config';
 import { trimObject } from '@/utils';
 

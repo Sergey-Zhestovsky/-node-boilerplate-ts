@@ -1,7 +1,7 @@
-import { logger } from '@/libs/Logger';
+import { HealthManager } from '@/libs/health-manager';
 
 const errorHandler = (error: Error) => {
-  logger.error(`Uncaught Error:`, error);
+  HealthManager.report(`Uncaught Error:`, error);
   process.exit(1);
 };
 

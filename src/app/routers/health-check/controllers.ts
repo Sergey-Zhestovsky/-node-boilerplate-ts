@@ -1,5 +1,5 @@
 import { HealthService } from '@/services/HealthService';
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { config } from '@/libs/config';
 import { HealthCheckDto, PingDto } from './dto';
 

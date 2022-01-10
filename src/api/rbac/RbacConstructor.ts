@@ -1,4 +1,4 @@
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { Action } from './Action';
 import { Role } from './Role';
 

@@ -40,7 +40,7 @@ class Localization {
     result.languages.forEach((lang) => {
       const missingLangPath = path.join(rootPath, lang, foldernameForMissingKeys);
 
-      if (!fs.lstatSync(missingLangPath).isDirectory()) {
+      if (!fs.existsSync(missingLangPath) || !fs.lstatSync(missingLangPath).isDirectory()) {
         fs.mkdirSync(missingLangPath, { recursive: true });
       }
     });

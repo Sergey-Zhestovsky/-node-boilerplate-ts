@@ -8,8 +8,9 @@ import app from './express';
 import { socket } from './app';
 import { db } from './api/database';
 import rbac from './api/rbac';
+import { HealthManager } from './libs/health-manager';
 import { localization } from './libs/localization';
-import { logger } from './libs/Logger';
+import { logger } from './libs/logger';
 import { config } from './libs/config';
 import { getServerDomain } from './utils';
 
@@ -30,7 +31,7 @@ const main = async () => {
       logger.info(`Server in '${config.nodeEnv}' mode listening on: ${domain}`);
     });
   } catch (error) {
-    logger.error(error as Error);
+    HealthManager.report(error);
   }
 };
 

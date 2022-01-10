@@ -3,7 +3,7 @@ import { Server, Socket } from 'socket.io';
 
 import { ClientError, Client401Error, Client500Error } from '@/libs/server-responses/ClientError';
 import { ClientRedirection, ServerError } from '@/libs/server-responses';
-import { logger } from '@/libs/Logger';
+import { HealthManager } from '@/libs/health-manager';
 import { config } from '@/libs/config';
 
 events.captureRejections = true;
@@ -16,13 +16,15 @@ const handleError = (error: Error, socket: Socket) => {
   }
 
   if (error instanceof ClientRedirection) {
-    socket.emit('error', error.getRedirection());
+    socket.emit('redirect', error.getRedirection());
     socket.disconnect();
     return;
   }
 
+  const errMessage = `Unhandled error: '${error.name}': '${error.message}'.\n${error.stack ?? ''}`;
+  HealthManager.report(errMessage);
+
   const serverError = new ServerError(error);
-  logger.error(`Unhandled error: '${error.name}': '${error.message}'.\n${error.stack ?? ''}`);
 
   if (config.isDevelopment()) {
     socket.emit('error', serverError.getError());

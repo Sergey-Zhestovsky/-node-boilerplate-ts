@@ -8,7 +8,7 @@ import { URL } from 'url';
 
 import { Validator, IExtendedValidator } from '@/libs/validator';
 import nodeEnv from '@/data/env.json';
-import { ELogLevel } from '@/types/logger';
+import { ELogLevel } from '@/libs/logger/types';
 import { TNodeEnv, TEnumNodeEnv } from './types';
 
 interface IBaseProcessEnv {

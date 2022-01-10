@@ -8,7 +8,7 @@ import _ from 'lodash';
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPI } from 'openapi-types';
 
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { config } from '@/libs/config';
 
 interface ISwaggerFileObject<T = object> {

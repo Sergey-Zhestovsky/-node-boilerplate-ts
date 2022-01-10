@@ -10,7 +10,7 @@ import { buildSchema, validateSchema, GraphQLError } from 'graphql';
 import { IResolvers } from '@graphql-tools/utils';
 
 import { TDirectiveTransformer } from '@/types/graphql';
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 
 interface IGqlResult {
   typeDefs: string;

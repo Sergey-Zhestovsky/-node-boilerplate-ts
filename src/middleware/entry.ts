@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { config } from '@/libs/config';
 import { passportAuthenticate } from './passport-authenticate';
 import { mutateQuery } from './utils/query-mutator';

@@ -1,4 +1,4 @@
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { RbacController } from './RbacController';
 
 import { IAllowConfig, IRestrictConfig, TStrategyAlg } from './types';

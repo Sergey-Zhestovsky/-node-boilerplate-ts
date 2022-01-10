@@ -9,7 +9,7 @@ import util from 'util';
 
 import { config } from '@/libs/config';
 import { cleanStack, stripAnsi } from '@/utils';
-import { ELogLevel, ILogEntry, TLogEntryType } from '@/types/logger';
+import { ELogLevel, ILogEntry, TLogEntryType } from './types';
 
 interface ILoggerInfo extends Logform.TransformableInfo {
   timestamp?: string;

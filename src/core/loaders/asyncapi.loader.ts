@@ -8,7 +8,7 @@ import glob from 'glob';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { config } from '@/libs/config';
 
 interface IAsyncApiFileObject<T = object> {

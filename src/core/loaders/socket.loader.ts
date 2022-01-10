@@ -6,7 +6,7 @@ import path from 'path';
 import _ from 'lodash';
 import { Server, Socket } from 'socket.io';
 
-import { logger } from '@/libs/Logger';
+import { logger } from '@/libs/logger';
 import { config } from '@/libs/config';
 
 interface ISocketFile<T = unknown> {
