@@ -9,7 +9,13 @@ import util from 'util';
 
 import { config } from '@/libs/config';
 import { cleanStack, stripAnsi } from '@/utils';
-import { ELogLevel, ILogEntry, TLogEntryType } from './types';
+import {
+  ELogLevel,
+  ILogEntry,
+  ILoggerOptions,
+  TFileTransportOptions,
+  TLogEntryType,
+} from './types';
 
 interface ILoggerInfo extends Logform.TransformableInfo {
   timestamp?: string;
@@ -78,22 +84,29 @@ class Logger {
     );
   }
 
-  private static getFileTransport(options: typeof config.global.logger) {
-    const getDailyRotate = (level: ELogLevel) => {
-      return new DailyRotateFile({
-        ...options.fileTransport,
-        level: level,
-        format: Logger.getFileLogFormat(),
-        filename: path.join(options.logPath, level, `${level}-%DATE%.log`),
-      });
-    };
+  private static getDailyRotateTransport(
+    level: ELogLevel,
+    logPath: string,
+    options: TFileTransportOptions = {}
+  ) {
+    return new DailyRotateFile({
+      ...options,
+      level: level,
+      format: Logger.getFileLogFormat(),
+      filename: path.join(logPath, level, `${level}-%DATE%.log`),
+    });
+  }
 
+  private static getFileTransport(logPath: string, options: ILoggerOptions) {
     const transports: DailyRotateFile[] = [];
     const currentSeverity = Logger.getSeverityLevel(options.logFileLevel);
 
     Object.entries(ELogLevel).forEach(([key, val]) => {
       const targetSeverity = Logger.getSeverityLevel(key as keyof typeof ELogLevel);
-      if (targetSeverity >= currentSeverity) transports.push(getDailyRotate(val));
+
+      if (targetSeverity >= currentSeverity) {
+        transports.push(Logger.getDailyRotateTransport(val, logPath, options.fileTransport));
+      }
     });
 
     return transports;
@@ -105,11 +118,11 @@ class Logger {
     });
   }
 
-  private static buildLogger(options: typeof config.global.logger) {
+  private static buildLogger(options: ILoggerOptions) {
     const transports = [];
 
     if (options.logPath) {
-      transports.push(...Logger.getFileTransport(options));
+      transports.push(...Logger.getFileTransport(options.logPath, options));
     }
 
     if (!options.console.blackListModes.includes(config.nodeEnv)) {
@@ -124,18 +137,34 @@ class Logger {
 
   private readonly winston: winston.Logger;
   private readonly debugger: debug.Debugger;
+  public readonly logLevel: ELogLevel;
 
   constructor(options = config.global.logger) {
     this.winston = Logger.buildLogger(options);
-    this.debugger = this.setupDebugger('app');
+    this.debugger = this.setupDebugger('app', options);
+    this.logLevel = options.logConsoleLevel;
   }
 
-  private setupDebugger(namespace: string) {
+  private setupDebugger(namespace: string, options: ILoggerOptions) {
+    let winstonForDebug: winston.Logger | undefined;
+
+    if (
+      Logger.getSeverityLevel(options.logFileLevel) <= Logger.LogLevelSeverities.Debug &&
+      options.logPath
+    ) {
+      winstonForDebug = winston.createLogger({
+        level: options.logFileLevel,
+        transports: [
+          Logger.getDailyRotateTransport(ELogLevel.Debug, options.logPath, options.fileTransport),
+        ],
+      });
+    }
+
     const debugInstance = debug(namespace);
 
     debugInstance.log = (...args: unknown[]) => {
       const res = args.map((v) => (typeof v === 'string' ? stripAnsi(v) : v));
-      this.winston.debug(util.format(...res));
+      winstonForDebug?.debug(util.format(...res).trim());
       // eslint-disable-next-line no-console
       console.log(...args);
     };
@@ -143,20 +172,8 @@ class Logger {
     return debugInstance;
   }
 
-  get middlewareOutput() {
-    return 'PATH::url [:method] :: status::status :: size::res[content-length] :: :response-time ms';
-  }
-
   getDebug(namespace: string) {
     return this.debugger.extend(namespace);
-  }
-
-  stream() {
-    return {
-      write: (message: string, encoding?: string) => {
-        this.info(message.replace(/\n/g, ''));
-      },
-    };
   }
 
   private parseLogEntry(level: ELogLevel, entries: TLogEntryType[]): ILogEntry {
@@ -179,8 +196,16 @@ class Logger {
     return { ...logEntry, message: util.format(...rowMessage) };
   }
 
+  canLog(logLevel: ELogLevel) {
+    return Logger.getSeverityLevel(logLevel) >= Logger.getSeverityLevel(this.logLevel);
+  }
+
   log(entry: ILogEntry) {
     return this.winston.log(entry);
+  }
+
+  debug(...args: TLogEntryType[]) {
+    return this.log(this.parseLogEntry(ELogLevel.Debug, args));
   }
 
   info(...args: TLogEntryType[]) {

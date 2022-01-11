@@ -1,14 +1,14 @@
 import path from 'path';
 
-import { environment, ENodeEnv, TNodeEnv } from '@/libs/config';
-import { ELogLevel } from '@/libs/logger/types';
+import { environment, ENodeEnv } from '@/libs/config';
+import { ELogLevel, ILoggerOptions } from '@/libs/logger/types';
 
-const config = {
+const config: ILoggerOptions = {
   logPath: path.join(__dirname, '../../logs'),
   logFileLevel: environment.vars.LOGGING_FILE_LEVEL ?? ELogLevel.Info,
   logConsoleLevel: environment.vars.LOGGING_CONSOLE_LEVEL ?? ELogLevel.Info,
   console: {
-    blackListModes: [ENodeEnv.TEST] as TNodeEnv[],
+    blackListModes: [ENodeEnv.TEST],
   },
   fileTransport: {
     datePattern: 'DD-MM-YYYY',

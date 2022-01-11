@@ -1,4 +1,5 @@
 import DailyRotateFile from 'winston-daily-rotate-file';
+import { TNodeEnv } from '../config';
 
 export enum ELogLevel {
   Debug = 'debug',
@@ -18,4 +19,14 @@ export interface ILogEntry {
   level: ELogLevel;
   message: string;
   stack?: string;
+}
+
+export interface ILoggerOptions {
+  logPath?: string;
+  logFileLevel: ELogLevel;
+  logConsoleLevel: ELogLevel;
+  console: {
+    blackListModes: TNodeEnv[];
+  };
+  fileTransport?: TFileTransportOptions;
 }
