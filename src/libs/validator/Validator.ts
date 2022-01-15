@@ -1,7 +1,7 @@
 import Joi, { ValidationOptions } from 'joi';
 
 import { extensionFactory, IExtendedValidator } from './extensions';
-import { IValidationResult, IValidatorConfig, TSchemaContainer } from './types';
+import { IValidationResult, IValidatorConfig, TSchemaContainer, TTranslationModel } from './types';
 
 export class Validator {
   private schema: Joi.ObjectSchema | null;
@@ -24,18 +24,21 @@ export class Validator {
   }
 
   setConfig(config: IValidatorConfig) {
-    const { required = true, errors = {}, ...rest } = config;
+    const { required = true, language, errors = {}, ...rest } = config;
 
     const validatorConfig: ValidationOptions = {
       presence: required ? 'required' : 'optional',
       errors: {
         wrap: { label: `'` },
+        language: language,
         ...errors,
       },
       ...rest,
     };
 
     this.config = { ...this.config, ...validatorConfig };
+
+    return this;
   }
 
   setSchema(schema: TSchemaContainer, config?: IValidatorConfig) {
@@ -55,6 +58,22 @@ export class Validator {
       this.schema = Joi.object(validationSchema);
     } else if (typeof retrievedSchema === 'object') {
       this.schema = Joi.object(retrievedSchema);
+    }
+
+    return this;
+  }
+
+  setTranslations(translations: TTranslationModel, baseLanguage?: string) {
+    if (!this.schema) return this;
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (baseLanguage && translations[baseLanguage]) {
+      this.schema = this.schema.messages({
+        ...translations[baseLanguage],
+        ...translations,
+      } as unknown as Record<string, string>);
+    } else {
+      this.schema = this.schema.messages(translations as unknown as Record<string, string>);
     }
 
     return this;

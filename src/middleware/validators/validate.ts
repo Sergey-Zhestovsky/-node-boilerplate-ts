@@ -1,8 +1,7 @@
-import Joi from 'joi';
 import { RequestHandler } from 'express';
 
 import { Dto } from '@/core/models/Dto';
-import { Validator, TSchemaContainer } from '@/libs/validator';
+import { Validator, TSchemaContainer, IValidatorConfig, TTranslationModel } from '@/libs/validator';
 import { ENamespace, localization } from '@/libs/localization';
 import { Client400Error } from '@/libs/server-responses';
 import { classOf } from '@/utils';
@@ -12,7 +11,7 @@ type TRequestProperty = 'body' | 'query' | 'params';
 const validate = (requestProperty: TRequestProperty, errorMessage = (error: string) => error) => {
   const validatorMiddleware = (
     schema: TSchemaContainer | typeof Dto,
-    validationConfig?: Joi.ValidationOptions,
+    validationConfig?: IValidatorConfig,
     replaceContent?: boolean
   ) => {
     const validator = new Validator();
@@ -23,12 +22,16 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
       validationConfig
     );
 
+    void localization.awaitInit().then(() => {
+      validator.setTranslations(
+        localization.getAllNamespaceTranslations(ENamespace.ValidationErrors) as TTranslationModel,
+        localization.mainLanguage
+      );
+    });
+
     const requestHandler: RequestHandler<unknown, unknown, unknown, unknown> = (req, res, next) => {
       const validationResult = validator.validate(req[requestProperty], {
-        messages: localization.getResourceBundle(
-          req.session.connection.language,
-          ENamespace.ValidationErrors
-        ) as Record<string, string>,
+        language: req.session.connection.language,
       });
 
       if (validationResult === null) {

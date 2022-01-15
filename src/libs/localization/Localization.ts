@@ -112,12 +112,29 @@ class Localization {
     return this.i18n.use(Backend).init();
   }
 
+  async awaitInit() {
+    return new Promise<void>((resolve, reject) => {
+      if (this.i18n.isInitialized) return resolve();
+
+      const resolveOnce = () => {
+        resolve();
+        this.i18n.off('initialized', resolveOnce);
+      };
+
+      this.i18n.on('initialized', resolveOnce);
+    });
+  }
+
   get initialized() {
     return this.i18n.isInitialized;
   }
 
   get strings() {
     return strings;
+  }
+
+  get mainLanguage() {
+    return this.i18n.options.lng;
   }
 
   get languages() {
@@ -137,6 +154,17 @@ class Localization {
 
   getResourceBundle(lng: string, ns: ENamespace) {
     return this.i18n.getResourceBundle(lng, ns) as DeepObject<string> | undefined;
+  }
+
+  getAllNamespaceTranslations(ns: ENamespace) {
+    const result: Record<string, DeepObject<string>> = {};
+
+    this.languages.forEach((lng) => {
+      const translate = this.getResourceBundle(lng, ns);
+      if (translate) result[lng] = translate;
+    });
+
+    return result;
   }
 
   translate(strPath: string, optionsOrLang?: TOptions<StringMap> | string) {

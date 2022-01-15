@@ -3,6 +3,7 @@ import { IExtendedValidator } from './extensions';
 
 export interface IValidatorConfig extends ValidationOptions {
   required?: boolean;
+  language?: string;
 }
 
 export type TSchemaContainer =
@@ -15,5 +16,7 @@ export interface IValidationResult<T = unknown> {
   errors: Record<string, string> | null;
   errorMessage: string | null;
 }
+
+export type TTranslationModel = Record<string, Record<string, string>>;
 
 export { IExtendedValidator };
