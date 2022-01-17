@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { ResResultData, ResErrorData } from '@/core/express';
 import {
   ClientError,
   Client500Error,
@@ -7,8 +8,8 @@ import {
   ClientRedirection,
   IPublicError,
 } from '@/libs/server-responses';
+import { Swagger } from '@/libs/swagger';
 import { config } from '@/libs/config';
-import { ResResultData, ResErrorData } from '@/types/express';
 
 type THandleResponse = <
   Res extends ResResultData,
@@ -46,6 +47,26 @@ const handleResponse: THandleResponse = (req, result, error) => {
   };
 };
 
+Swagger.setResultResponseSchema((ref?: string) => {
+  return {
+    schema: {
+      type: 'object',
+      properties: {
+        result: ref ? { $ref: ref } : { default: null },
+        isSuccess: {
+          type: 'boolean',
+          default: true,
+        },
+        error: {
+          type: 'object',
+          nullable: true,
+          default: null,
+        },
+      },
+    },
+  };
+});
+
 const returnMixin = (req: Request, res: Response) => {
   return (result: ResResultData = null, error: ResErrorData = null) => {
     if (result instanceof ClientRedirection) return result.redirect(res);
@@ -53,6 +74,24 @@ const returnMixin = (req: Request, res: Response) => {
     return res.send(handleResponse(req, result, error));
   };
 };
+
+Swagger.setErrorResponseSchema(() => {
+  return {
+    schema: {
+      type: 'object',
+      properties: {
+        result: {
+          default: null,
+        },
+        isSuccess: {
+          type: 'boolean',
+          default: false,
+        },
+        error: Swagger.getSchema('ClientError').schema,
+      },
+    },
+  };
+});
 
 const throwMixin = (req: Request, res: Response) => {
   return (error?: ResErrorData) => {

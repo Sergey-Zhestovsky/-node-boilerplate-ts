@@ -1,5 +1,4 @@
-import { RequestHandler } from 'express';
-
+import { RequestHandler } from '@/core/express';
 import { Dto } from '@/core/models/Dto';
 import { Validator, TSchemaContainer, IValidatorConfig, TTranslationModel } from '@/libs/validator';
 import { ENamespace, localization } from '@/libs/localization';
@@ -29,7 +28,7 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
       );
     });
 
-    const requestHandler: RequestHandler<unknown, unknown, unknown, unknown> = (req, res, next) => {
+    const requestHandler: RequestHandler = (req, res, next) => {
       const validationResult = validator.validate(req[requestProperty], {
         language: req.session.connection.language,
       });

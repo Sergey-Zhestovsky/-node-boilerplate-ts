@@ -9,6 +9,8 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 type MaybePromise<T> = Promise<T> | T;
 
+type Modify<T, R> = Omit<T, keyof R> & R;
+
 interface DeepObject<T> {
   [key: string]: Array<DeepObject<T> | T> | DeepObject<T> | T;
 }

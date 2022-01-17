@@ -9,7 +9,7 @@ import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPI } from 'openapi-types';
 
 import { logger } from '@/libs/logger';
-import { config } from '@/libs/config';
+import { getServerDomain } from '@/utils';
 
 interface ISwaggerFileObject<T = object> {
   servers?: unknown[];
@@ -61,10 +61,7 @@ const swaggerLoader = (relativePath = __dirname, options = DEFAULT_OPTIONS) => {
     const baseSwaggerFile: ISwaggerFileObject | null = extractObjectFromFile(swaggerBasePaths[0]);
     if (baseSwaggerFile === null) throw new Error('Could not parse swagger base file');
     // add server path
-    baseSwaggerFile.servers = [
-      ...(baseSwaggerFile.servers ?? []),
-      { url: config.global.swagger.serverURL },
-    ];
+    baseSwaggerFile.servers = [...(baseSwaggerFile.servers ?? []), { url: getServerDomain() }];
 
     // load all files from app
     const pathToAllSwaggerFiles = path.resolve(relativePath, options.filePath, options.fileName);

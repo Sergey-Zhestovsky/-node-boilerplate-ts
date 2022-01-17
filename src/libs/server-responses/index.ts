@@ -1,3 +1,5 @@
+import './swagger-model';
+
 export * from './ClientError';
 export * from './ServerError';
 export * from './ClientRedirection';
