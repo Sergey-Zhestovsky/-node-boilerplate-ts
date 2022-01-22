@@ -12,9 +12,9 @@ export class HealthManager {
   }
 
   report(...error: unknown[]) {
-    this.reportAdapters.forEach((Adapter) => {
+    for (const Adapter of this.reportAdapters) {
       const adapter = new Adapter(error);
       adapter.report();
-    });
+    }
   }
 }

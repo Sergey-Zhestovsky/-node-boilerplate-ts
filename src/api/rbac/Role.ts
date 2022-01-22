@@ -41,10 +41,17 @@ export class Role extends Tree {
 
   getAllActions() {
     const actions = new Set<Action>();
-    this.actions.forEach((a) => actions.add(a));
-    this.inherits.forEach((r) => {
-      r.getAllActions().forEach((a) => actions.add(a));
-    });
+
+    for (const a of this.actions) {
+      actions.add(a);
+    }
+
+    for (const r of this.inherits) {
+      for (const a of r.getAllActions()) {
+        actions.add(a);
+      }
+    }
+
     return [...actions.values()];
   }
 

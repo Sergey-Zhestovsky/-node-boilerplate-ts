@@ -17,7 +17,7 @@ export const urlValidatorExtension: Joi.ExtensionFactory = (joi: Joi.Root) => {
         validate(value: string, helpers: Joi.CustomHelpers) {
           try {
             return new URL(value);
-          } catch (e) {
+          } catch {
             return helpers.error('string.uri');
           }
         },

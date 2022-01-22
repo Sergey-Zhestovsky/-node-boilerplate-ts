@@ -12,11 +12,11 @@ export class LoggerReportAdapter extends ReportAdapter {
   private processReportData(reportData: unknown[]) {
     const result: TLogEntryType[] = [];
 
-    reportData.forEach((rd) => {
+    for (const rd of reportData) {
       if (['string', 'number', 'boolean', 'object'].includes(typeof rd) || rd instanceof Error) {
         result.push(rd as TLogEntryType);
       }
-    });
+    }
 
     return result;
   }

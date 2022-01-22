@@ -18,10 +18,10 @@ export const buildActions = <
 ): R => {
   const result: TActionList = {};
 
-  actionList.forEach((Action) => {
+  for (const Action of actionList) {
     const action = new Action(...args);
     result[Action.name] = action;
-  });
+  }
 
   return result as R;
 };

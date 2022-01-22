@@ -11,7 +11,7 @@ export class DecodedJwt<P extends JwtPayload | string = JwtPayload> {
     validator.setSchema(validationModel);
     const res = validator.validate(payload);
 
-    if (!res || res.errors) {
+    if (res.errors) {
       throw new Error('Token payload has invalid structure.');
     }
 

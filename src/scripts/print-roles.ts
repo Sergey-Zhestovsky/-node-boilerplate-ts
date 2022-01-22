@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-/* eslint-disable no-param-reassign */
+
 
 import 'colors';
 import '../core/helpers/setup-modules';
@@ -57,7 +57,7 @@ const printTree = (roleTree: RbacController) => {
     let colorStr = '';
     const nextLayer: IExtendedRole[] = [];
 
-    rolesLayer.forEach((role) => {
+    for (const role of rolesLayer) {
       const shiftFromLeft = (symbolsInNode + 1) * (role.position / 0.5);
       const prefix = ' '.repeat(shiftFromLeft - str.length);
 
@@ -71,7 +71,7 @@ const printTree = (roleTree: RbacController) => {
       str += `${prefix}(${stringIndex})`;
       colorStr += `${prefix}(${stringIndex[nodeColor as unknown as number]})`;
       nextLayer.push(...(role.inherits as IExtendedRole[]));
-    });
+    }
 
     console.log(colorStr);
     console.log();
@@ -116,12 +116,12 @@ const printStepTree = (roleTree: IExtendedRole) => {
     const nextBranch = `${baseBranch}├─`;
     const lastBranch = `${baseBranch}└─`;
 
-    role.inherits.forEach((child, index) => {
+    for (const [index, child] of role.inherits.entries()) {
       printBranch(
         child as IExtendedRole,
         role.inherits.length - 1 === index ? lastBranch : nextBranch
       );
-    });
+    }
   };
 
   console.log('=========== Role Steps Tree ===========\n'.cyan);
@@ -172,10 +172,10 @@ const printRBAC = () => {
     const zone: IZone<number | null> = { left: null, right: null };
 
     if (res.length) {
-      res.forEach(({ range }) => {
+      for (const { range } of res) {
         if (zone.left === null || zone.left > (range.left ?? 0)) zone.left = range.left;
         if (zone.right === null || zone.right < (range.right ?? 0)) zone.right = range.right;
-      });
+      }
     } else {
       zone.left = leftRange;
       zone.right = leftRange;

@@ -60,7 +60,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !isNaN(value),
+            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
             message: 'must be a number',
           },
         ],
@@ -80,7 +80,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !isNaN(value),
+            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
             message: 'must be a number',
           },
         ],
@@ -100,7 +100,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !isNaN(value),
+            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
             message: 'must be a number',
           },
         ],
@@ -126,7 +126,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !isNaN(value),
+            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
             message: 'must be a number',
           },
         ],

@@ -87,8 +87,8 @@ const graphqlAssembler = (
   };
 
   // load typeDefs & resolvers
-  root.forEach((rootFolder) => {
-    if (excludeFolder(rootFolder, config.excludeFolders)) return;
+  for (const rootFolder of root) {
+    if (excludeFolder(rootFolder, config.excludeFolders)) continue;
 
     const relPath = path.join(config.pathPattern, rootFolder);
     const basePath = path.resolve(relativePath, relPath);
@@ -97,13 +97,13 @@ const graphqlAssembler = (
 
     try {
       resolvers = require(path.join(basePath, config.resolverFileName));
-    } catch (e) {
+    } catch {
       logger.warn(`Cant find '${config.resolverFileName}' file in '${relPath}'`);
     }
 
     try {
       typeDefs = getGraphqlFile(path.join(basePath, config.graphqlFileName));
-    } catch (error) {
+    } catch {
       logger.warn(`Cant find '${config.graphqlFileName}' file in '${relPath}'`);
     }
 
@@ -111,7 +111,7 @@ const graphqlAssembler = (
       typeDefsArr.push(typeDefs);
       result.resolvers = _.merge(result.resolvers, resolvers);
     }
-  });
+  }
 
   // load directives
   const rootDirectives = path.resolve(relativePath, config.directives.rootPath);
@@ -130,7 +130,7 @@ const graphqlAssembler = (
       result.schemaDirectives = directives;
       typeDefsArr.push(...gqlDirectives);
     }
-  } catch (error) {
+  } catch {
     // graphql setup without directives
   }
 
@@ -141,7 +141,10 @@ const graphqlAssembler = (
     const errors = validateSchema(schema);
 
     if (errors.length) {
-      errors.forEach((error) => logger.error(getGraphqlError(error)));
+      for (const error of errors) {
+        logger.error(getGraphqlError(error));
+      }
+
       process.exit(1);
     }
 

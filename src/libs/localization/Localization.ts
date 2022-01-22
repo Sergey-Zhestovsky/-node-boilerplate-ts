@@ -37,13 +37,13 @@ class Localization {
       throw new Error(`Base language folder '${baseLanguage}' in not found by path: ${rootPath}`);
     }
 
-    result.languages.forEach((lang) => {
+    for (const lang of result.languages) {
       const missingLangPath = path.join(rootPath, lang, foldernameForMissingKeys);
 
       if (!fs.existsSync(missingLangPath) || !fs.lstatSync(missingLangPath).isDirectory()) {
         fs.mkdirSync(missingLangPath, { recursive: true });
       }
-    });
+    }
 
     result.namespaces = fs
       .readdirSync(baseLanguagePath)
@@ -159,10 +159,10 @@ class Localization {
   getAllNamespaceTranslations(ns: ENamespace) {
     const result: Record<string, DeepObject<string>> = {};
 
-    this.languages.forEach((lng) => {
+    for (const lng of this.languages) {
       const translate = this.getResourceBundle(lng, ns);
       if (translate) result[lng] = translate;
-    });
+    }
 
     return result;
   }

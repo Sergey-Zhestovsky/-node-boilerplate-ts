@@ -50,7 +50,7 @@ const extractObjectFromFile = (pathToFile: string, preprocessor = (file: string)
       const processedFile = preprocessor(rowFile);
       const doc = yaml.load(processedFile);
       return doc as object;
-    } catch (e) {
+    } catch {
       return {};
     }
   } else if (ext === 'json') {

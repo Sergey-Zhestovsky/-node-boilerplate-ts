@@ -8,10 +8,11 @@ interface IOptions {
 }
 
 // prettier-ignore
+// eslint-disable-next-line unicorn/no-unsafe-regex
 const pathRegex = /^(?:(?:(?:node|node:[\w/]+|(?:(?:node:)?internal\/[\w/]*|.*node_modules\/(?:babel-polyfill|pirates)\/.*)?\w+)(?:\.js)?:\d+:\d+)|native)/;
 const extractPathRegex = /\s+at.*[(\s](.*)\)?/;
-const projectDir = process.cwd().replace(/\\/g, '/');
-const homeDir = os.homedir().replace(/\\/g, '/');
+const projectDir = process.cwd().replaceAll('\\', '/');
+const homeDir = os.homedir().replaceAll('\\', '/');
 
 const normalizeOptions = (options: IOptions) => {
   const { pretty = false, whiteListPath, onlyFromProjectDir, ...rest } = options;
@@ -26,7 +27,7 @@ const normalizeOptions = (options: IOptions) => {
 };
 
 const escapeStringRegexp = (str: string) => {
-  return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d');
+  return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replaceAll('-', '\\x2d');
 };
 
 export const cleanStack = <T extends string | undefined>(stack: T, options: IOptions = {}): T => {
@@ -36,7 +37,7 @@ export const cleanStack = <T extends string | undefined>(stack: T, options: IOpt
 
   if (typeof basePath === 'string') {
     basePathRegex = new RegExp(
-      `(at | \\()${escapeStringRegexp(basePath.replace(/\\/g, '/'))}`,
+      `(at | \\()${escapeStringRegexp(basePath.replaceAll('\\', '/'))}`,
       'g'
     );
   }
@@ -46,7 +47,7 @@ export const cleanStack = <T extends string | undefined>(stack: T, options: IOpt
   }
 
   return stack
-    .replace(/\\/g, '/')
+    .replaceAll('\\', '/')
     .split('\n')
     .filter((line) => {
       const pathMatches = line.match(extractPathRegex);

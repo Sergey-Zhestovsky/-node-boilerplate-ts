@@ -18,9 +18,9 @@ export const flattenObject = (obj: TDeepObject) => {
     }
 
     if (Array.isArray(nestedEl)) {
-      nestedEl.forEach((v, i) => {
+      for (const [i, v] of nestedEl.entries()) {
         flatten(v, `${parentName}[${i}]`, resultedObj);
-      });
+      }
 
       return resultedObj;
     }

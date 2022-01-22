@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { Server, Socket } from 'socket.io';
 
 import { Validator } from '@/libs/validator';
-import { Client400Error, Client500Error } from '@/libs/server-responses';
+import { Client400Error } from '@/libs/server-responses';
 import SocketHandler from './SocketHandler';
 
 class SocketHandlerFactory {
@@ -17,21 +17,19 @@ class SocketHandlerFactory {
     const result: unknown[] = [];
 
     if (Array.isArray(validationSchema)) {
-      validationSchema.forEach((schema, i) => {
+      for (const [i, schema] of validationSchema.entries()) {
         if (schema) {
           validator.setSchema(schema);
           const vRes = validator.validate(payloads[i]);
-          if (vRes === null) throw new Client500Error();
           if (vRes.errors) throw new Client400Error(`Bad payload: ${vRes.errorMessage ?? ''}`);
           result[i] = vRes.value;
         } else {
           result[i] = payloads[i];
         }
-      });
+      }
     } else {
       validator.setSchema(validationSchema);
       const vRes = validator.validate(payloads[0]);
-      if (vRes === null) throw new Client500Error();
       if (vRes.errors) throw new Client400Error(`Bad payload: ${vRes.errorMessage ?? ''}`);
       result[0] = vRes.value;
     }
@@ -52,7 +50,7 @@ class SocketHandlerFactory {
   }
 
   inject(socket: Socket) {
-    this.handlers.forEach((Handler) => {
+    for (const Handler of this.handlers) {
       const handler = new Handler(this.server, socket);
 
       const handleFn = (...args: unknown[]) => {
@@ -62,7 +60,7 @@ class SocketHandlerFactory {
       };
 
       socket.on(handler.Event.Name, handleFn);
-    });
+    }
   }
 }
 

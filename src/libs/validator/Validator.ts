@@ -54,7 +54,11 @@ export class Validator {
 
     if (Array.isArray(retrievedSchema)) {
       const validationSchema: Joi.SchemaMap = {};
-      retrievedSchema.forEach((setting) => (validationSchema[setting] = Joi.any()));
+
+      for (const setting of retrievedSchema) {
+        validationSchema[setting] = Joi.any();
+      }
+
       this.schema = Joi.object(validationSchema);
     } else if (typeof retrievedSchema === 'object') {
       this.schema = Joi.object(retrievedSchema);
@@ -79,8 +83,8 @@ export class Validator {
     return this;
   }
 
-  validate<T>(data: unknown, config?: IValidatorConfig): IValidationResult<T> | null {
-    if (!this.schema) return null;
+  validate<T>(data: unknown, config?: IValidatorConfig): IValidationResult<T> {
+    if (!this.schema) throw new Error('Validation schema is not set.');
     if (config) this.setConfig(config);
 
     const result = this.schema.validate(data, this.config);

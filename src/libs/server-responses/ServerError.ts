@@ -35,6 +35,7 @@ export class ServerError extends ClientError {
 
   constructor(error: IServerErrorConstructor) {
     super(error);
+    this.name = 'ServerError';
 
     this.stack = error.stack;
     this.correlationId = null;
@@ -44,9 +45,7 @@ export class ServerError extends ClientError {
     if (this.correlationId !== null) return;
     this.correlationId = uuid();
     // TODO: create record in db.error table with error object and id as `correlationId`
-    // try
-    // await db.actions.error.add({ id: this.correlationId, ...this.getError() });
-    // catch
+    // db.actions.error.add({ id: this.correlationId, ...this.getError() });
   }
 
   removeStack() {

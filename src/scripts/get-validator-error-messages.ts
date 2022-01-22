@@ -15,7 +15,7 @@ const getValidatorErrorMessages = async () => {
   // eslint-disable-next-line
   const joiTypes: Set<string> = validator.joi._types;
 
-  joiTypes.forEach((type) => {
+  for (const type of joiTypes) {
     // @ts-ignore: extract each type
     // eslint-disable-next-line
     const messages: IMessages = validator.joi[type]()._definition.messages as IMessages;
@@ -23,7 +23,7 @@ const getValidatorErrorMessages = async () => {
     for (const [key, value] of Object.entries(messages)) {
       resMessages[key] = value.source;
     }
-  });
+  }
 
   return JSON.stringify(resMessages, null, '  ');
 };

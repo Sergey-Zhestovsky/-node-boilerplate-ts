@@ -12,7 +12,7 @@ const getKeyFolder = (fileName: string = '') => {
 const getKey = (filePath: string) => {
   try {
     return fs.readFileSync(filePath);
-  } catch (error) {
+  } catch {
     const errMessage = `JWT key not found on path ${filePath}. Hint: run 'npm run generate-jwt-key-pair'`;
     throw new Error(errMessage);
   }

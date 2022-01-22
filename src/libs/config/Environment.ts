@@ -110,10 +110,7 @@ class Environment {
 
     const validator = new Validator();
     validator.setSchema(Environment.getValidationSchema.bind(Environment, forNodeEnv));
-    const res = validator.validate<T>(process.env);
-
-    if (!res) throw new Error();
-    const { value, errors } = res;
+    const { value, errors } = validator.validate<T>(process.env);
 
     if (errors) {
       const errDescription = Object.values(errors)

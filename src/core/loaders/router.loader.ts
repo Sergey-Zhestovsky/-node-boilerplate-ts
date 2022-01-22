@@ -16,14 +16,14 @@ const routesAssembler = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   const root = fs.readdirSync(rootPath);
   const result: Router[] = [];
 
-  root.forEach((rootFolder) => {
-    if (!fs.statSync(path.join(rootPath, rootFolder)).isDirectory()) return;
+  for (const rootFolder of root) {
+    if (!fs.statSync(path.join(rootPath, rootFolder)).isDirectory()) continue;
     const relPath = path.join(config.pathPattern, rootFolder);
     const fullPath = path.resolve(relativePath, relPath, config.fileName);
     const router = require(fullPath) as RequireModule<Router>;
     // @ts-ignore: Suppose that `router.default` property comes from `export default`.
     result.push(router.default ?? router);
-  });
+  }
 
   return result;
 };

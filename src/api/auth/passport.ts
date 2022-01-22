@@ -4,6 +4,6 @@ import { strategies } from './strategies';
 
 export const passport = new Passport();
 
-Object.entries(strategies).forEach(([name, strategy]) => {
+for (const [name, strategy] of Object.entries(strategies)) {
   passport.use(name, strategy);
-});
+}

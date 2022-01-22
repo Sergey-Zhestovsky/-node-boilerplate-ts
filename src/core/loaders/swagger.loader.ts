@@ -37,7 +37,7 @@ const extractObjectFromFile = (pathToFile: string) => {
       const doc = yaml.load(fs.readFileSync(pathToFile, 'utf8'));
       if (typeof doc === 'object') return doc;
       return null;
-    } catch (e) {
+    } catch {
       return {};
     }
   } else if (ext === 'json') {

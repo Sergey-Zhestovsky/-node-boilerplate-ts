@@ -25,19 +25,19 @@ export class RbacConstructor {
     const rolesGraph = new Map<IRoleSchema, IRoleSchema[]>();
     const actions = new Map<string, Action>();
 
-    roleSchemas.forEach((roleSchema) => {
-      if (rolesGraph.has(roleSchema)) return;
+    for (const roleSchema of roleSchemas) {
+      if (rolesGraph.has(roleSchema)) continue;
 
-      roleSchema.actions.forEach((action) => {
+      for (const action of roleSchema.actions) {
         if (!actions.has(action)) actions.set(action, new Action(null, action));
-      });
+      }
 
       const inheritance = roleSchema.inherits
         ?.map((descriptor) => roleSchemas.find((r) => r.descriptor === descriptor) ?? null)
         .filter<IRoleSchema>((v): v is IRoleSchema => v !== null);
 
       rolesGraph.set(roleSchema, inheritance ?? []);
-    });
+    }
 
     return { rolesGraph, actions };
   }
@@ -52,9 +52,9 @@ export class RbacConstructor {
   ) {
     let tempForRoot = [...roleSchemas];
 
-    rolesGraph.forEach((val) => {
-      tempForRoot = tempForRoot.filter((tRoom) => !val.includes(tRoom));
-    });
+    for (const [, rg] of rolesGraph) {
+      tempForRoot = tempForRoot.filter((tRoom) => !rg.includes(tRoom));
+    }
 
     if (tempForRoot.length > 1) throw new Error('Role tree cannot be with more than one root');
     if (tempForRoot.length === 0) throw new Error('Role tree should have one root');

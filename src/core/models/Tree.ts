@@ -7,11 +7,17 @@ export class Tree {
 
   preOrderWalk<T extends this = this>(callback: (node: T) => void) {
     callback(this as T);
-    this.nodes.forEach((node) => node.preOrderWalk(callback));
+
+    for (const node of this.nodes) {
+      node.preOrderWalk(callback);
+    }
   }
 
   postOrderWalk<T extends this = this>(callback: (node: T) => void) {
-    this.nodes.forEach((node) => node.postOrderWalk(callback));
+    for (const node of this.nodes) {
+      node.postOrderWalk(callback);
+    }
+
     callback(this as T);
   }
 }

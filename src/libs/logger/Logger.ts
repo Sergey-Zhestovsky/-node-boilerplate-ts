@@ -41,9 +41,9 @@ class Logger {
   static getSeverityLevel(level: keyof typeof ELogLevel | ELogLevel) {
     let keyLevel: keyof typeof ELogLevel | undefined;
 
-    Object.entries(ELogLevel).forEach(([key, val]) => {
+    for (const [key, val] of Object.entries(ELogLevel)) {
       if (key === level || val === level) keyLevel = key as keyof typeof ELogLevel;
-    });
+    }
 
     if (!keyLevel) return -1;
     return Logger.LogLevelSeverities[keyLevel];
@@ -101,13 +101,13 @@ class Logger {
     const transports: DailyRotateFile[] = [];
     const currentSeverity = Logger.getSeverityLevel(options.logFileLevel);
 
-    Object.entries(ELogLevel).forEach(([key, val]) => {
+    for (const [key, val] of Object.entries(ELogLevel)) {
       const targetSeverity = Logger.getSeverityLevel(key as keyof typeof ELogLevel);
 
       if (targetSeverity >= currentSeverity) {
         transports.push(Logger.getDailyRotateTransport(val, logPath, options.fileTransport));
       }
-    });
+    }
 
     return transports;
   }

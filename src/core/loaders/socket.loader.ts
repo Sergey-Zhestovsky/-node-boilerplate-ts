@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/no-array-for-each */
 /* eslint-disable @typescript-eslint/no-require-imports */
 
 import http from 'http';
@@ -70,7 +71,7 @@ const retrieveModule = <T = unknown>(
 ): T | null => {
   try {
     return require(pathToFile) as T;
-  } catch (error) {
+  } catch {
     logger.warn(`${errorMessage} '${pathToFile}'`);
     return null;
   }
@@ -80,7 +81,7 @@ const retrieveFilesFromDir = <T = unknown>(dirPath: string) => {
   const root = fs.readdirSync(dirPath);
   const res: Array<ISocketFile<T>> = [];
 
-  root.forEach((file) => {
+  for (const file of root) {
     try {
       const module = require(path.join(dirPath, file)) as RequireModule<T>;
 
@@ -90,10 +91,10 @@ const retrieveFilesFromDir = <T = unknown>(dirPath: string) => {
         path: dirPath,
         file: file,
       });
-    } catch (e) {
+    } catch {
       logger.warn(`Cant retrieve '${file}' file from '${dirPath}'`);
     }
-  });
+  }
 
   return res;
 };
@@ -112,7 +113,9 @@ const applyControllers = (
     }
   };
 
-  controllerFiles.forEach(({ module }) => processObject(module));
+  for (const { module } of controllerFiles) {
+    processObject(module);
+  }
 };
 
 const socketLoader = <T = unknown>(

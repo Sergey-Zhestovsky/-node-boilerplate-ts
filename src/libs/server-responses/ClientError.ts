@@ -53,6 +53,7 @@ export class ClientError<Descriptor = unknown> extends Error {
 
   constructor({ type, status, message, descriptor }: IClientError<Descriptor>) {
     super(message);
+    this.name = 'ClientError';
 
     this.type = type ?? baseErrors.InternalServerError.type;
     this.status = status ?? baseErrors.InternalServerError.status;

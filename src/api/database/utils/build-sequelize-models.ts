@@ -8,10 +8,10 @@ export const buildSequelizeModels = <T extends TModelList = TModelList>(
 ): T => {
   const result: TModelList = {};
 
-  list.forEach((modelFactory) => {
+  for (const modelFactory of list) {
     const model = modelFactory(sequelize, DataTypes);
     result[model.name] = model;
-  });
+  }
 
   for (const [, model] of Object.entries(result)) {
     if (model.associate) model.associate(result);

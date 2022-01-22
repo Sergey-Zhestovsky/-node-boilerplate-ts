@@ -49,7 +49,7 @@ export class PostgresConnectionInterface<
     try {
       await this.connection.authenticate();
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

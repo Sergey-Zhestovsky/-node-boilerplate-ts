@@ -1,12 +1,10 @@
-import asyncapi from './asyncapi/asyncapi.config';
-import auth from './auth.config';
-import cors from './cors.config';
-import database from './database.config';
-import helmet from './helmet.config';
-import localization from './localization.config';
-import logger from './logger.config';
-import * as roles from './roles.config';
-import socket from './socket.config';
-import swagger from './swagger.config';
-
-export { asyncapi, auth, cors, database, helmet, localization, logger, roles, socket, swagger };
+export { default as asyncapi } from './asyncapi/asyncapi.config';
+export { default as auth } from './auth.config';
+export { default as cors } from './cors.config';
+export { default as database } from './database.config';
+export { default as helmet } from './helmet.config';
+export { default as localization } from './localization.config';
+export { default as logger } from './logger.config';
+export * as roles from './roles.config';
+export { default as socket } from './socket.config';
+export { default as swagger } from './swagger.config';

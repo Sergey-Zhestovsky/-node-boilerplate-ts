@@ -36,7 +36,7 @@ const run = async (args: string[]) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     script = (require(`@/scripts/${scriptName}`) as RequireDefaultModule<TScript>).default;
-  } catch (error) {
+  } catch {
     return console.log(`Script with name: '${scriptName}' not found in src/scripts/ dir.`);
   }
 

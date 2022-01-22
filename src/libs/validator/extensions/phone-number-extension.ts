@@ -1,3 +1,1 @@
-import phoneNumberValidatorExtension from 'joi-phone-number';
-
-export { phoneNumberValidatorExtension };
+export { default as phoneNumberValidatorExtension } from 'joi-phone-number';

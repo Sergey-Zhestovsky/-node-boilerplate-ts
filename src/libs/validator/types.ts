@@ -19,4 +19,4 @@ export interface IValidationResult<T = unknown> {
 
 export type TTranslationModel = Record<string, Record<string, string>>;
 
-export { IExtendedValidator };
+export { IExtendedValidator } from './extensions';

@@ -3,7 +3,7 @@ import { Dto } from '@/core/models/Dto';
 import { Validator, TSchemaContainer, IValidatorConfig, TTranslationModel } from '@/libs/validator';
 import { ENamespace, localization } from '@/libs/localization';
 import { Client400Error } from '@/libs/server-responses';
-import { classOf } from '@/utils';
+import { extendsFrom } from '@/utils';
 
 type TRequestProperty = 'body' | 'query' | 'params';
 
@@ -14,7 +14,7 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
     replaceContent?: boolean
   ) => {
     const validator = new Validator();
-    const isDto = classOf(schema as typeof Dto, Dto);
+    const isDto = extendsFrom(schema as typeof Dto, Dto);
 
     validator.setSchema(
       isDto ? (schema as typeof Dto).validator : (schema as TSchemaContainer),
@@ -32,10 +32,6 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
       const validationResult = validator.validate(req[requestProperty], {
         language: req.session.connection.language,
       });
-
-      if (validationResult === null) {
-        return next();
-      }
 
       if (validationResult.errors) {
         return next(

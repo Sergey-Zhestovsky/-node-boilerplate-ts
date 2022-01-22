@@ -1,4 +1,4 @@
-export * from './class-of';
+export * from './extends-from';
 export * from './clean-stack';
 export * from './flatten-object';
 export * from './get-server-domain';
