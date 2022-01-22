@@ -10,7 +10,6 @@ export interface IOneOfNumberExtend extends Joi.NumberSchema {
 
 const nonEmptyArrayOf = (type: string) => {
   return (value: unknown) => {
-    // eslint-disable-next-line valid-typeof
     return Array.isArray(value) && value.length > 0 && value.every((v) => typeof v === type);
   };
 };

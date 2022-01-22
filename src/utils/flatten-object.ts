@@ -1,4 +1,4 @@
-type TPrimitives = Primitives | null;
+type TPrimitives = string | number | boolean | null;
 
 type TDeepObject<T extends TPrimitives = TPrimitives> = DeepObject<T>;
 

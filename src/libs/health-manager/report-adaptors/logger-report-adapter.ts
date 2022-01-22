@@ -1,4 +1,5 @@
 import { logger, TLogEntryType } from '@/libs/logger';
+import { is } from '@/utils';
 import { ReportAdapter } from '../ReportAdapter';
 
 export class LoggerReportAdapter extends ReportAdapter {
@@ -13,7 +14,7 @@ export class LoggerReportAdapter extends ReportAdapter {
     const result: TLogEntryType[] = [];
 
     for (const rd of reportData) {
-      if (['string', 'number', 'boolean', 'object'].includes(typeof rd) || rd instanceof Error) {
+      if (is.oneOf(['string', 'number', 'boolean', 'object', Error], rd)) {
         result.push(rd as TLogEntryType);
       }
     }

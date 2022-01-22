@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import { is } from '@/utils/is';
+
 interface IPasswordExtend extends Joi.StringSchema {
   /**
    * @description  Specifies the minimum number of uppercase string characters.
@@ -43,7 +45,8 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
     base: joi.string(),
     messages: {
       'password.minOfUppercase': '{{#label}} should contain at least {{#min}} uppercase character',
-      'password.minOfSpecialCharacters': '{{#label}} should contain at least {{#min}} special character',
+      'password.minOfSpecialCharacters':
+        '{{#label}} should contain at least {{#min}} special character',
       'password.minOfLowercase': '{{#label}} should contain at least {{#min}} lowercase character',
       'password.minOfNumeric': '{{#label}} should contain at least {{#min}} numeric character',
       'password.noWhiteSpaces': '{{#label}} should not contain white spaces',
@@ -60,7 +63,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
+            assert: (value) => is.number(value),
             message: 'must be a number',
           },
         ],
@@ -80,7 +83,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
+            assert: (value) => is.number(value),
             message: 'must be a number',
           },
         ],
@@ -100,7 +103,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
+            assert: (value) => is.number(value),
             message: 'must be a number',
           },
         ],
@@ -126,7 +129,7 @@ export const passwordValidatorExtension: Joi.ExtensionFactory = (joi) => {
         args: [
           {
             name: 'min',
-            assert: (value) => typeof value === 'number' && !Number.isNaN(value),
+            assert: (value) => is.number(value),
             message: 'must be a number',
           },
         ],

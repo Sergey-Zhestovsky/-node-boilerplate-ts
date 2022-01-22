@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 
-type Primitives = string | number | boolean;
-
-type NullablePrimitives = string | number | boolean | null | undefined;
+type TypeofValues =
+  | 'string'
+  | 'number'
+  | 'bigint'
+  | 'boolean'
+  | 'symbol'
+  | 'undefined'
+  | 'object'
+  | 'function';
 
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
 
 type MaybePromise<T> = Promise<T> | T;
+
+type MaybeArray<T> = T[] | T;
 
 type Modify<T, R> = Omit<T, keyof R> & R;
 

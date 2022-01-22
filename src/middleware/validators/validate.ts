@@ -3,7 +3,7 @@ import { Dto } from '@/core/models/Dto';
 import { Validator, TSchemaContainer, IValidatorConfig, TTranslationModel } from '@/libs/validator';
 import { ENamespace, localization } from '@/libs/localization';
 import { Client400Error } from '@/libs/server-responses';
-import { extendsFrom } from '@/utils';
+import { is } from '@/utils';
 
 type TRequestProperty = 'body' | 'query' | 'params';
 
@@ -14,12 +14,8 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
     replaceContent?: boolean
   ) => {
     const validator = new Validator();
-    const isDto = extendsFrom(schema as typeof Dto, Dto);
-
-    validator.setSchema(
-      isDto ? (schema as typeof Dto).validator : (schema as TSchemaContainer),
-      validationConfig
-    );
+    const isDto = is.extendsOf(Dto, schema);
+    validator.setSchema(isDto ? schema.validator : schema, validationConfig);
 
     void localization.awaitInit().then(() => {
       validator.setTranslations(
@@ -43,7 +39,7 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
       }
 
       if (isDto && replaceContent === undefined) {
-        const DtoSchema = schema as typeof Dto;
+        const DtoSchema = schema;
         req[requestProperty] = new DtoSchema(validationResult.value);
       } else if (replaceContent) {
         req[requestProperty] = validationResult.value;
