@@ -3,7 +3,7 @@ import _ from 'lodash';
 import * as cfg from '@/config';
 import { environment } from './Environment';
 
-class Config {
+export class Config {
   private readonly environment: typeof environment;
   public readonly global: typeof cfg;
 
@@ -41,5 +41,3 @@ class Config {
     return _.get(this.global, path, defaultValue) as T;
   }
 }
-
-export const config = new Config();

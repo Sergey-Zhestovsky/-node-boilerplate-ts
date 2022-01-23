@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { ExtractJwt } from 'passport-jwt';
 
-import { environment } from '@/libs/config';
+import { Environment } from '@/libs/config';
 import { IJwtStrategyOptions } from '@/api/auth/types';
 
 const getKeyFolder = (fileName: string = '') => {
@@ -22,7 +22,7 @@ const jwtKeysOptions = {
   algorithm: 'rsa',
   keyLength: 4096,
   cipher: 'aes-256-ofb',
-  passphrase: environment.vars.AUTH_SERVER_SECRET,
+  passphrase: Environment.vars.AUTH_SERVER_SECRET,
   location: {
     keyPath: getKeyFolder(),
     publicKeyName: 'public.pem',

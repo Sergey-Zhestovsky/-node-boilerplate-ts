@@ -1,7 +1,7 @@
 import { RequestHandler } from '@/core/express';
 import { Dto } from '@/core/models/Dto';
 import { Validator, TSchemaContainer, IValidatorConfig, TTranslationModel } from '@/libs/validator';
-import { ENamespace, localization } from '@/libs/localization';
+import { ENamespace, Localization } from '@/libs/localization';
 import { Client400Error } from '@/libs/server-responses';
 import { is } from '@/utils';
 
@@ -17,10 +17,10 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
     const isDto = is.extendsOf(Dto, schema);
     validator.setSchema(isDto ? schema.validator : schema, validationConfig);
 
-    void localization.awaitInit().then(() => {
+    void Localization.awaitInit().then(() => {
       validator.setTranslations(
-        localization.getAllNamespaceTranslations(ENamespace.ValidationErrors) as TTranslationModel,
-        localization.mainLanguage
+        Localization.getAllNamespaceTranslations(ENamespace.ValidationErrors) as TTranslationModel,
+        Localization.mainLanguage
       );
     });
 

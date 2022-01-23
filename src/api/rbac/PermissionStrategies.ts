@@ -1,4 +1,4 @@
-import { logger } from '@/libs/logger';
+import { Logger } from '@/libs/logger';
 import { RbacController } from './RbacController';
 
 import { IAllowConfig, IRestrictConfig, TStrategyAlg } from './types';
@@ -19,9 +19,11 @@ export class PermissionStrategies {
     return EStrategy;
   }
 
+  private readonly logger: Logger;
   private readonly rbacController: RbacController;
 
   constructor(rbacController: RbacController) {
+    this.logger = new Logger('RBAC');
     this.rbacController = rbacController;
   }
 
@@ -30,7 +32,7 @@ export class PermissionStrategies {
     const tRole = this.rbacController.getRole(targetRole);
 
     if (!cRole || !tRole) {
-      logger.warn(
+      this.logger.warn(
         `RBAC${
           strategy ? ` ${strategy}` : ''
         }: didn't find '${currentRole}' or '${targetRole}' role.`

@@ -9,7 +9,7 @@ import {
   IPublicError,
 } from '@/libs/server-responses';
 import { Swagger } from '@/libs/swagger';
-import { config } from '@/libs/config';
+import { Config } from '@/libs/config';
 
 type THandleResponse = <
   Res extends ResResultData,
@@ -31,7 +31,7 @@ const handleResponse: THandleResponse = (req, result, error) => {
 
   if (error !== null) {
     if (error instanceof ServerError) {
-      if (!config.isDevelopment()) error.removeStack();
+      if (!Config.isDevelopment()) error.removeStack();
       clientError = error;
     } else if (error instanceof ClientError) {
       clientError = error;

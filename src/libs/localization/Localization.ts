@@ -2,13 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import i18next, { i18n, StringMap, TOptions } from 'i18next';
 
-import { config } from '@/libs/config';
 import { flattenObject } from '@/utils';
 import { Backend } from './plugins';
 import { strings } from './strings';
 import { ENamespace, IGeneratedOptions, IInitOptions, IOptions } from './types';
 
-class Localization {
+export class Localization {
   private static getLocalizationFolderPaths(rootPath: string, missingFoldername: string) {
     return {
       filePath: path.join(rootPath, '/{{lng}}/{{ns}}.json'),
@@ -147,7 +146,7 @@ class Localization {
 
   resolveBestLanguage(lang: string[] | string) {
     // eslint-disable-next-line
-    return localization.i18n.services.languageUtils.getBestMatchFromCodes(
+    return this.i18n.services.languageUtils.getBestMatchFromCodes(
       Array.isArray(lang) ? lang : [lang]
     ) as string;
   }
@@ -184,5 +183,3 @@ class Localization {
     return this.i18n.t(keyPath.replace(/\\./g, '.'), options);
   }
 }
-
-export const localization = new Localization(config.global.localization);

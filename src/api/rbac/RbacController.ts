@@ -1,8 +1,9 @@
-import { config } from '@/libs/config';
-import { Role } from './Role';
+import { Config } from '@/libs/config';
+
 import { Action } from './Action';
 import { PermissionStrategies, TStrategyName } from './PermissionStrategies';
 import { RbacConstructor } from './RbacConstructor';
+import { Role } from './Role';
 import { IAllowConfig, IRestrictConfig, IRoleSchema } from './types';
 
 export class RbacController {
@@ -26,7 +27,7 @@ export class RbacController {
     this.synchronized = false;
   }
 
-  initialize(roleSchemasObj: Record<string, IRoleSchema> = config.global.roles) {
+  initialize(roleSchemasObj: Record<string, IRoleSchema> = Config.global.roles) {
     const rbacConstructor = new RbacConstructor(roleSchemasObj);
     const { rootRole, roles, actions } = rbacConstructor.buildRoleTree();
 

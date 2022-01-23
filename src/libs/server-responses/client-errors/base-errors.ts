@@ -1,36 +1,36 @@
-import { localization } from '@/libs/localization';
+import { Localization } from '@/libs/localization';
 
 export const BASE_ERRORS = {
   BadRequest: {
     status: 400,
-    message: localization.strings.errorMessages.badRequest,
+    message: Localization.strings.errorMessages.badRequest,
   },
   Unauthorized: {
     status: 401,
-    message: localization.strings.errorMessages.unauthorized,
+    message: Localization.strings.errorMessages.unauthorized,
   },
   Forbidden: {
     status: 403,
-    message: localization.strings.errorMessages.forbidden,
+    message: Localization.strings.errorMessages.forbidden,
   },
   NotFound: {
     status: 404,
-    message: localization.strings.errorMessages.notFound,
+    message: Localization.strings.errorMessages.notFound,
   },
   Conflict: {
     status: 409,
-    message: localization.strings.errorMessages.conflict,
+    message: Localization.strings.errorMessages.conflict,
   },
   Gone: {
     status: 410,
-    message: localization.strings.errorMessages.gone,
+    message: Localization.strings.errorMessages.gone,
   },
   TooManyRequests: {
     status: 429,
-    message: localization.strings.errorMessages.tooManyRequests,
+    message: Localization.strings.errorMessages.tooManyRequests,
   },
   InternalServerError: {
     status: 500,
-    message: localization.strings.errorMessages.internalServerError,
+    message: Localization.strings.errorMessages.internalServerError,
   },
 };

@@ -8,8 +8,10 @@ import _ from 'lodash';
 import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPI } from 'openapi-types';
 
-import { logger } from '@/libs/logger';
+import { Logger } from '@/libs/logger';
 import { getServerDomain } from '@/utils';
+
+const logger = new Logger('Swagger:Loader');
 
 interface ISwaggerFileObject<T = object> {
   servers?: unknown[];

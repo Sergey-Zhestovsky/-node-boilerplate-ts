@@ -3,7 +3,7 @@ import { VerifyOptions } from 'jsonwebtoken';
 import { Strategy, StrategyOptions, VerifiedCallback } from 'passport-jwt';
 import { promisify } from 'util';
 
-import { config } from '@/libs/config';
+import { Config } from '@/libs/config';
 import { IExtendedValidator, TSchemaContainer } from '@/libs/validator';
 import { IJwtPayload } from '@/types/auth';
 import { DecodedJwt } from './DecodedJwt';
@@ -102,4 +102,4 @@ class JWTStrategy extends Strategy {
   }
 }
 
-export const jwtStrategy = new JWTStrategy(config.global.auth.jwtStrategy);
+export const jwtStrategy = new JWTStrategy(Config.global.auth.jwtStrategy);

@@ -1,10 +1,12 @@
 import { RequestHandler } from 'express';
 import morgan from 'morgan';
 
-import { logger, ELogLevel } from '@/libs/logger';
+import { Logger, ELogLevel } from '@/libs/logger';
 
 export const queryLogger = (): RequestHandler => {
-  if (logger.canLog(ELogLevel.Debug)) {
+  if (Logger.canLog(ELogLevel.Debug)) {
+    const logger = new Logger('Query');
+
     return morgan(
       'PATH::url [:method] :: status::status :: size::res[content-length] :: :response-time ms',
       {

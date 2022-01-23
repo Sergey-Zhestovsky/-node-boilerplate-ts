@@ -7,8 +7,10 @@ import path from 'path';
 import _ from 'lodash';
 import { Server, Socket } from 'socket.io';
 
-import { logger } from '@/libs/logger';
-import { config } from '@/libs/config';
+import { Logger } from '@/libs/logger';
+import { Config } from '@/libs/config';
+
+const logger = new Logger('Socket:Loader');
 
 interface ISocketFile<T = unknown> {
   module: T;
@@ -158,7 +160,7 @@ const socketLoader = <T = unknown>(
 
   // create and assemble server
   return (httpServer: http.Server) => {
-    const io = new Server(httpServer, config.global.socket);
+    const io = new Server(httpServer, Config.global.socket);
 
     let socketHandlerFactory: IHandlerFactory | null = null;
 

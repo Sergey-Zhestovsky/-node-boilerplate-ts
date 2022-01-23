@@ -3,14 +3,14 @@ import express, { Express } from 'express';
 
 import { TAsyncApiResponse, IPathContract, IFileContract } from '@/core/loaders/asyncapi.loader';
 import { Client404Error } from '@/libs/server-responses';
-import { config } from '@/libs/config';
+import { Config } from '@/libs/config';
 
 export const asyncapiMiddleware = (
   app: Express,
   asyncapi: TAsyncApiResponse,
   urlPath: string = '/asyncapi'
 ) => {
-  if (!config.global.asyncapi.withAsyncapi) return;
+  if (!Config.global.asyncapi.withAsyncapi) return;
 
   app.use(
     urlPath,

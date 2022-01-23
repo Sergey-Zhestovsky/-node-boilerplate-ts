@@ -19,6 +19,7 @@ class SocketHandler<T extends unknown[] = unknown[]> {
   /**
    * Method for handling incoming event.
    */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   handle(...args: T): Promise<void> | void {}
 
   /**

@@ -31,19 +31,6 @@
         "resolveJsonModule": true,
         "forceConsistentCasingInFileNames": true
     },
-    "exclude": [
-        "node_modules",
-        "dist",
-        ".git",
-        ".idea",
-        ".DS_Store"
-    ],
-    "include": [
-        "src/**/*"
-    ],
-    "files": [
-        "src/types/index.d.ts"
-    ],
     "ts-node": {
         "files": true
     }

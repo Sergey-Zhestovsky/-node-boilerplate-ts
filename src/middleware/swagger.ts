@@ -3,14 +3,14 @@ import swaggerUi from 'swagger-ui-express';
 import { OpenAPIV3 as OpenAPI } from 'openapi-types';
 
 import { Client404Error } from '@/libs/server-responses';
-import { config } from '@/libs/config';
+import { Config } from '@/libs/config';
 
 export const swaggerMiddleware = (
   app: Express,
   swagger: Promise<OpenAPI.Document | null>,
   urlPath: string = '/swagger'
 ) => {
-  if (!config.global.swagger.withSwagger) return;
+  if (!Config.global.swagger.withSwagger) return;
   app.use(urlPath, swaggerUi.serve);
 
   app.get(urlPath, async (req, res, next) => {

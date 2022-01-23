@@ -1,8 +1,8 @@
 import { Request } from 'express';
 import Negotiator from 'negotiator';
 
-import { localization } from '@/libs/localization';
-import { config } from '@/libs/config';
+import { Localization } from '@/libs/localization';
+import { Config } from '@/libs/config';
 
 export interface INegotiationResult {
   negotiate: Negotiator;
@@ -12,15 +12,15 @@ export interface INegotiationResult {
 const lookupLanguage = (request: Request, negotiator: Negotiator) => {
   let language: string | undefined;
 
-  const headerName = config.global.localization.preferredLangRequestHeader;
+  const headerName = Config.global.localization.preferredLangRequestHeader;
 
   if (headerName) {
     const langFromHeader = request.headers[headerName];
-    if (langFromHeader) language = localization.resolveBestLanguage(langFromHeader);
+    if (langFromHeader) language = Localization.resolveBestLanguage(langFromHeader);
   }
 
   if (language === undefined) {
-    language = negotiator.language(localization.languages);
+    language = negotiator.language(Localization.languages);
   }
 
   return language as string;

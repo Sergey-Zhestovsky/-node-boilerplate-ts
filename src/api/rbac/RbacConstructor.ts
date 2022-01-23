@@ -1,4 +1,4 @@
-import { logger } from '@/libs/logger';
+import { Logger } from '@/libs/logger';
 import { Action } from './Action';
 import { Role } from './Role';
 
@@ -11,9 +11,11 @@ interface IConstructedTree {
 }
 
 export class RbacConstructor {
+  private readonly logger: Logger;
   private readonly roleSchemasObj: Record<string, IRoleSchema>;
 
   constructor(roleSchemasObj: Record<string, IRoleSchema>) {
+    this.logger = new Logger('RBAC:Constructor');
     this.roleSchemasObj = roleSchemasObj;
   }
 
@@ -114,7 +116,7 @@ export class RbacConstructor {
     const rootRole = walkToBuildRoles(startRole, metNodes);
 
     if (metNodes.length !== roleSchemas.length) {
-      logger.warn(
+      this.logger.warn(
         `Looks like role tree has unresolved nodes. Resolved: ${
           metNodes.length
         }, unresolved: ${Math.abs(metNodes.length - roleSchemas.length)}`

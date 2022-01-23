@@ -1,6 +1,7 @@
-import { localization } from '../localization';
 import { trimObject } from '@/utils';
-import { EClientErrorType, baseErrors, clientErrors } from './client-errors';
+
+import { Localization } from '../localization';
+import { baseErrors, clientErrors, EClientErrorType } from './client-errors';
 import { baseClientErrorClassBuilder, customClientErrorClassBuilder } from './error-class-builder';
 import { IClientError, IPublicError } from './types';
 
@@ -84,7 +85,7 @@ export class ClientError<Descriptor = unknown> extends Error {
     const rawError = this.getRawError();
 
     if (localizeMessageLng && rawError.message) {
-      rawError.message = localization.translateStr(rawError.message, localizeMessageLng);
+      rawError.message = Localization.translateStr(rawError.message, localizeMessageLng);
     }
 
     return trimObject(rawError);

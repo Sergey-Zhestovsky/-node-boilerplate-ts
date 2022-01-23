@@ -1,8 +1,6 @@
-import { logger } from '@/libs/logger';
-import { config, IProcessEnv } from '@/libs/config';
+import { Config, IProcessEnv } from '@/libs/config';
+import { Logger } from '@/libs/logger';
 import { trimObject } from '@/utils';
-
-const debug = logger.getDebug('service:health');
 
 export interface IServerStatus {
   status: string;
@@ -11,16 +9,18 @@ export interface IServerStatus {
 }
 
 export class HealthService {
-  static getServerStatus(withEnvironment = false) {
-    debug(`Get in pingController with environment: '%s'`, withEnvironment);
+  private readonly debug = Logger.getDebug('service:health');
+
+  getServerStatus(withEnvironment = false) {
+    this.debug(`Get in pingController with environment: '%s'`, withEnvironment);
 
     const result: IServerStatus = {
       status: 'OK',
       started: true,
-      environment: withEnvironment ? config.env : undefined,
+      environment: withEnvironment ? Config.env : undefined,
     };
 
-    debug(`Get out pingController with status: '%s'`, result.status);
+    this.debug(`Get out pingController with status: '%s'`, result.status);
     return trimObject(result);
   }
 }

@@ -4,7 +4,7 @@ import { HealthManager } from '../health-manager';
 import { BaseEvent } from './BaseEvent';
 import { IBusEvent, TListener } from './types';
 
-class EventBus {
+export class EventBus {
   private static getEventName(eventClass: IBusEvent | string) {
     return typeof eventClass === 'function' ? eventClass.EventName : eventClass;
   }
@@ -46,5 +46,3 @@ class EventBus {
       });
   }
 }
-
-export const eventBus = new EventBus();

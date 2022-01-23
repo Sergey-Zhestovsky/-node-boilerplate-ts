@@ -1,4 +1,4 @@
-import { environment } from '@/libs/config';
+import { Environment } from '@/libs/config';
 import { getServerDomain } from '@/utils';
 
 interface IAsyncApiConfig {
@@ -9,9 +9,9 @@ interface IAsyncApiConfig {
 const defaultDomain = getServerDomain({ protocol: 'ws' });
 
 const config: IAsyncApiConfig = {
-  withAsyncapi: environment.vars.ASYNCAPI === 'on',
+  withAsyncapi: Environment.vars.ASYNCAPI === 'on',
   vars: {
-    ASYNCAPI_PUBLIC_URL: environment.vars.ASYNCAPI_PUBLIC_URL?.href ?? defaultDomain,
+    ASYNCAPI_PUBLIC_URL: Environment.vars.ASYNCAPI_PUBLIC_URL?.href ?? defaultDomain,
   },
 };
 

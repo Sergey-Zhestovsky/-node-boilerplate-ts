@@ -1,4 +1,4 @@
-import { environment } from '@/libs/config';
+import { Environment } from '@/libs/config';
 
 interface IDefaultValues {
   host?: string;
@@ -11,7 +11,7 @@ export const getServerDomain = ({
   port = 3000,
   protocol = 'http',
 }: IDefaultValues = {}) => {
-  const resHost = environment.vars.HOST ?? host;
-  const resPort = environment.vars.PORT ?? port;
+  const resHost = Environment.vars.HOST ?? host;
+  const resPort = Environment.vars.PORT ?? port;
   return `${protocol}://${resHost}:${resPort}`;
 };

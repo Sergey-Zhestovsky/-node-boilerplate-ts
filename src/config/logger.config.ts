@@ -1,12 +1,12 @@
 import path from 'path';
 
-import { environment, ENodeEnv } from '@/libs/config';
+import { Environment, ENodeEnv } from '@/libs/config';
 import { ELogLevel, ILoggerOptions } from '@/libs/logger/types';
 
 const config: ILoggerOptions = {
   logPath: path.join(__dirname, '../../logs'),
-  logFileLevel: environment.vars.LOGGING_FILE_LEVEL ?? ELogLevel.Info,
-  logConsoleLevel: environment.vars.LOGGING_CONSOLE_LEVEL ?? ELogLevel.Info,
+  logFileLevel: Environment.vars.LOGGING_FILE_LEVEL ?? ELogLevel.Info,
+  logConsoleLevel: Environment.vars.LOGGING_CONSOLE_LEVEL ?? ELogLevel.Info,
   console: {
     blackListModes: [ENodeEnv.TEST],
   },

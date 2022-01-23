@@ -1,12 +1,14 @@
 import { getRouter } from '@/core/express';
 import { Swagger } from '@/libs/swagger';
 import { validateQuery } from '@/middleware';
-import { pingController, healthController } from './controllers';
-import { HealthCheckDto, PingDto } from './dto';
+
 import { HealthCheckContract } from './contracts';
+import { HealthCheckController } from './controllers';
+import { HealthCheckDto, PingDto } from './dto';
 
 Swagger.setTag('health-check');
 const router = getRouter('/health-check');
+const healthCheckController = new HealthCheckController();
 
 Swagger.setEndpoint('get', '/health-check/', {
   operationId: 'getHealthCheckStatus',
@@ -22,7 +24,7 @@ router.get<unknown, HealthCheckContract, unknown, HealthCheckDto>(
   '/',
   validateQuery(HealthCheckDto),
   async ({ query }, res) => {
-    const result = healthController(query);
+    const result = healthCheckController.health(query);
     return res.status(200).return(HealthCheckContract.fromObject(result));
   }
 );
@@ -41,7 +43,7 @@ router.get<unknown, object | string, unknown, PingDto>(
   '/ping',
   validateQuery(PingDto),
   async ({ query }, res) => {
-    const result = pingController(query);
+    const result = healthCheckController.ping(query);
     return res.status(200).return(result);
   }
 );

@@ -4,7 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { ClientError, Client401Error, Client500Error } from '@/libs/server-responses/ClientError';
 import { ClientRedirection, ServerError } from '@/libs/server-responses';
 import { HealthManager } from '@/libs/health-manager';
-import { config } from '@/libs/config';
+import { Config } from '@/libs/config';
 
 events.captureRejections = true;
 
@@ -26,7 +26,7 @@ const handleError = (error: Error, socket: Socket) => {
 
   const serverError = new ServerError(error);
 
-  if (config.isDevelopment()) {
+  if (Config.isDevelopment()) {
     socket.emit('error', serverError.getError());
   } else {
     socket.emit('error', new Client500Error().getError());

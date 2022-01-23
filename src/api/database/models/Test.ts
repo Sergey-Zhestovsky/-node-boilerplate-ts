@@ -12,7 +12,9 @@ interface ITestAttributes {
 interface ITestConstructor extends Optional<ITestAttributes, 'id'> {}
 
 export class TestModel extends Model<ITestAttributes, ITestConstructor> {
-  static associate(models: IPostgresModels) {}
+  static associate(models: IPostgresModels) {
+    // blank
+  }
 
   public declare id: number;
   public declare name: string;

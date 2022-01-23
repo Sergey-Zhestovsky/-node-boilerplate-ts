@@ -5,6 +5,7 @@ export class Dto {
     return {};
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor(...args: any[]) {}
 }
 

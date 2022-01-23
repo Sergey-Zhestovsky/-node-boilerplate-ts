@@ -1,13 +1,15 @@
-import { logger, TLogEntryType } from '@/libs/logger';
+import { Logger, TLogEntryType } from '@/libs/logger';
 import { is } from '@/utils';
 import { ReportAdapter } from '../ReportAdapter';
 
 export class LoggerReportAdapter extends ReportAdapter {
   public processedReportData: TLogEntryType[];
+  public logger: Logger;
 
   constructor(reportData: unknown[]) {
     super(reportData);
     this.processedReportData = this.processReportData(reportData);
+    this.logger = new Logger('Report');
   }
 
   private processReportData(reportData: unknown[]) {
@@ -24,7 +26,7 @@ export class LoggerReportAdapter extends ReportAdapter {
 
   report() {
     if (this.processedReportData.length > 0) {
-      logger.error(...this.processedReportData);
+      this.logger.error(...this.processedReportData);
     }
   }
 }

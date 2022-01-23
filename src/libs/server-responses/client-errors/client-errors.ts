@@ -1,8 +1,8 @@
-import { localization } from '@/libs/localization';
+import { Localization } from '@/libs/localization';
 
 export const clientErrors = {
   ExpiredToken: {
     status: 401,
-    message: localization.strings.errorMessages.accessToken,
+    message: Localization.strings.errorMessages.accessToken,
   },
 };

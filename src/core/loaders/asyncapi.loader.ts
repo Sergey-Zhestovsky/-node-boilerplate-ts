@@ -8,8 +8,10 @@ import glob from 'glob';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 
-import { logger } from '@/libs/logger';
-import { config } from '@/libs/config';
+import { Logger } from '@/libs/logger';
+import { Config } from '@/libs/config';
+
+const logger = new Logger('AsyncAPI:Loader');
 
 interface IAsyncApiFileObject<T = object> {
   tags?: unknown[];
@@ -74,7 +76,7 @@ const asyncAPILoader = (relativePath = __dirname, options = DEFAULT_OPTIONS): TA
 
     const baseAsyncapiFile = extractObjectFromFile(existedAsyncapiBasePaths[0], (doc) => {
       return doc.replace(/\{\{(.+?)\}\}/g, (origin, variable: string) => {
-        return (config.global.asyncapi.vars[variable] as string | undefined) ?? origin;
+        return (Config.global.asyncapi.vars[variable] as string | undefined) ?? origin;
       });
     });
 

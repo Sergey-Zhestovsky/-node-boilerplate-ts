@@ -2,7 +2,7 @@ import SwaggerParser from '@apidevtools/swagger-parser';
 import { OpenAPIV3 as OpenAPI } from 'openapi-types';
 
 import { appendArray, appendObject, getServerDomain } from '@/utils';
-import { logger } from '../logger';
+import { Logger } from '../logger';
 import {
   ISwaggerOptions,
   TDocument,
@@ -49,11 +49,13 @@ export class Swagger {
     return `${prefix ? `${prefix}.` : ''}${name}.${key}`;
   }
 
+  private readonly logger: Logger;
   private readonly openAPI: TDocument;
   private resultResponseSchema?: TSchemaBuilder;
   private errorResponseSchema?: TSchemaBuilder;
 
   constructor(options: ISwaggerOptions) {
+    this.logger = new Logger('Swagger');
     this.openAPI = appendObject(Swagger.getOpenAPIBoilerplate(), options.baseOpenAPI);
     if (this.openAPI.servers.length === 0) this.openAPI.servers = [{ url: getServerDomain() }];
   }
@@ -72,7 +74,7 @@ export class Swagger {
     const schema = this.findSchema(name);
 
     if (!schema) {
-      logger.warn(`Swagger :: Can't find response schema on path '${name}'.`);
+      this.logger.warn(`Can't find response schema on path '${name}'.`);
       if (builder) return builder();
       return {};
     }
@@ -146,7 +148,7 @@ export class Swagger {
     const pathObj: OpenAPI.PathsObject = { [path]: { [method]: schema } };
 
     if (this.openAPI.paths[path]) {
-      logger.warn(`Swagger :: Endpoint on path '${path}' already exists.`);
+      this.logger.warn(`Endpoint on path '${path}' already exists.`);
     }
 
     appendObject(this.openAPI.paths, pathObj);
@@ -158,7 +160,7 @@ export class Swagger {
     };
 
     if (this.findSchema(name)) {
-      logger.warn(`Swagger :: Schema with name '${name}' already exists.`);
+      this.logger.warn(`Schema with name '${name}' already exists.`);
     }
 
     appendObject(this.openAPI.components.schemas, schemaObj);
@@ -169,7 +171,7 @@ export class Swagger {
     const schema = this.findSchema(fullName);
 
     if (!schema) {
-      logger.warn(`Swagger :: Can't find schema with name '${name}'.`);
+      this.logger.warn(`Can't find schema with name '${name}'.`);
       return { schema: {} };
     }
 
@@ -184,7 +186,7 @@ export class Swagger {
     const params: Record<string, OpenAPI.ParameterObject> = {};
 
     if (this.getQuerySchema(name).length > 0) {
-      logger.warn(`Swagger :: Query schema with name '${name}' already exists.`);
+      this.logger.warn(`Query schema with name '${name}' already exists.`);
     }
 
     for (const [key, value] of Object.entries(schema)) {
@@ -220,7 +222,7 @@ export class Swagger {
 
       return this.openAPI;
     } catch (error) {
-      logger.error(error as Error);
+      this.logger.error(error as Error);
       return null;
     }
   }

@@ -2,7 +2,7 @@ import { ApolloServer } from 'apollo-server-express';
 import { Express } from 'express';
 
 import { graphql } from './app';
-import { config } from './libs/config';
+import { Config } from './libs/config';
 
 const { loaders, ...serverConfig } = graphql;
 
@@ -20,7 +20,7 @@ export const applyGraphql = async (expressApp: Express) => {
 
   const middleware = server.getMiddleware({
     path: '/api/v1/graphql',
-    cors: config.global.cors.withCors ? config.global.cors.config : false,
+    cors: Config.global.cors.withCors ? Config.global.cors.config : false,
   });
 
   expressApp.use(middleware);

@@ -5,10 +5,10 @@ import crypto from 'crypto';
 import rimraf from 'rimraf';
 import { promisify } from 'util';
 
-import { config } from '@/libs/config';
+import { Config } from '@/libs/config';
 
 const generateJwtKeyPair = async () => {
-  const jwtKeysConfig = config.global.auth.jwtKeys;
+  const jwtKeysConfig = Config.global.auth.jwtKeys;
 
   const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
     modulusLength: jwtKeysConfig.keyLength,

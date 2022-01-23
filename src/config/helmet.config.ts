@@ -1,12 +1,12 @@
 import helmet from 'helmet';
 
-import { environment, ENodeEnv } from '@/libs/config';
+import { Environment, ENodeEnv } from '@/libs/config';
 
 type THelmetOptions = Writeable<Exclude<Parameters<typeof helmet>[0], undefined>>;
 
 const config: THelmetOptions = {};
 
-switch (environment.nodeEnv) {
+switch (Environment.nodeEnv) {
   case ENodeEnv.DEVELOPMENT:
     config.contentSecurityPolicy = false;
     break;
