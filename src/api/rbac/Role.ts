@@ -1,9 +1,9 @@
-import Action from './Action';
-import Tree from '../classes/Tree';
+import { Tree } from '@/core/models/Tree';
+import { Action } from './Action';
 
 type TSynchronizePayload = { id: string } | string;
 
-class Role extends Tree {
+export class Role extends Tree {
   constructor(
     private id: string | null | undefined,
     public readonly descriptor: string,
@@ -41,10 +41,17 @@ class Role extends Tree {
 
   getAllActions() {
     const actions = new Set<Action>();
-    this.actions.forEach((a) => actions.add(a));
-    this.inherits.forEach((r) => {
-      r.getAllActions().forEach((a) => actions.add(a));
-    });
+
+    for (const a of this.actions) {
+      actions.add(a);
+    }
+
+    for (const r of this.inherits) {
+      for (const a of r.getAllActions()) {
+        actions.add(a);
+      }
+    }
+
     return [...actions.values()];
   }
 
@@ -63,5 +70,3 @@ class Role extends Tree {
     return this.can(action);
   }
 }
-
-export default Role;

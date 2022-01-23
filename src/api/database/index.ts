@@ -1,7 +1,6 @@
-import actions from './actions';
-import connection from './connection';
+import { postgres } from './connection';
 
-export default {
-  actions: actions,
-  connection: connection,
+export const db = {
+  postgres,
+  actions: postgres.actions,
 };

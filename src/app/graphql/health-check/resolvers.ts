@@ -1,5 +1,7 @@
-import HealthService from '../../../services/HealthService';
-import env from '../../../data/env.json';
+import { HealthService } from '@/services/HealthService';
+import { Config } from '@/libs/config';
+
+const healthService = new HealthService();
 
 const ping = () => 'pong';
 
@@ -9,8 +11,8 @@ interface IHealthCheckDto {
 
 const healthCheck = (_: unknown, { input }: { input: IHealthCheckDto }) => {
   let { withEnv = false } = input;
-  if (process.env.NODE_ENV === env.PRODUCTION) withEnv = false;
-  return HealthService.getServerStatus(withEnv);
+  if (Config.isProduction()) withEnv = false;
+  return healthService.getServerStatus(withEnv);
 };
 
 export = {

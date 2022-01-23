@@ -1,26 +1,26 @@
-import logger from '../libs/Logger';
+import { Config, IProcessEnv } from '@/libs/config';
+import { Logger } from '@/libs/logger';
+import { trimObject } from '@/utils';
 
-const debug = logger.getDebug('service:health');
-
-interface IServerStatus {
+export interface IServerStatus {
   status: string;
   started: boolean;
-  environment?: Record<string, string>;
+  environment?: IProcessEnv;
 }
 
-class HealthService {
-  static getServerStatus(withEnvironment = false) {
-    debug(`Get in pingController with environment: '%s'`, withEnvironment);
+export class HealthService {
+  private readonly debug = Logger.getDebug('service:health');
+
+  getServerStatus(withEnvironment = false) {
+    this.debug(`Get in pingController with environment: '%s'`, withEnvironment);
 
     const result: IServerStatus = {
       status: 'OK',
       started: true,
+      environment: withEnvironment ? Config.env : undefined,
     };
-    if (withEnvironment) result.environment = process.initialEnvironmentConfig;
 
-    debug(`Get out pingController with status: '%s'`, result.status);
-    return result;
+    this.debug(`Get out pingController with status: '%s'`, result.status);
+    return trimObject(result);
   }
 }
-
-export default HealthService;

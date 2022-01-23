@@ -1,5 +1,5 @@
-import RbacController from './RbacController';
-import logger from '../../libs/Logger';
+import { Logger } from '@/libs/logger';
+import { RbacController } from './RbacController';
 
 import { IAllowConfig, IRestrictConfig, TStrategyAlg } from './types';
 
@@ -14,14 +14,16 @@ export enum EStrategy {
 
 export type TStrategyName = keyof typeof EStrategy;
 
-class PermissionStrategies {
+export class PermissionStrategies {
   static get Strategies() {
     return EStrategy;
   }
 
+  private readonly logger: Logger;
   private readonly rbacController: RbacController;
 
   constructor(rbacController: RbacController) {
+    this.logger = new Logger('RBAC');
     this.rbacController = rbacController;
   }
 
@@ -30,7 +32,7 @@ class PermissionStrategies {
     const tRole = this.rbacController.getRole(targetRole);
 
     if (!cRole || !tRole) {
-      logger.warn(
+      this.logger.warn(
         `RBAC${
           strategy ? ` ${strategy}` : ''
         }: didn't find '${currentRole}' or '${targetRole}' role.`
@@ -95,5 +97,3 @@ class PermissionStrategies {
     return true;
   }
 }
-
-export default PermissionStrategies;

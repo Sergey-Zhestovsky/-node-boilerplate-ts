@@ -1,12 +1,12 @@
-import Role from './Role';
-import Action from './Action';
-import PermissionStrategies, { TStrategyName } from './PermissionStrategies';
-import RbacConstructor from './RbacConstructor';
+import { Config } from '@/libs/config';
 
-import * as roleSchemaConfig from '../../config/roles.config';
+import { Action } from './Action';
+import { PermissionStrategies, TStrategyName } from './PermissionStrategies';
+import { RbacConstructor } from './RbacConstructor';
+import { Role } from './Role';
 import { IAllowConfig, IRestrictConfig, IRoleSchema } from './types';
 
-class RbacController {
+export class RbacController {
   public root: Role | null;
   public roles: Role[];
   public actions: Action[];
@@ -27,7 +27,7 @@ class RbacController {
     this.synchronized = false;
   }
 
-  initialize(roleSchemasObj: Record<string, IRoleSchema> = roleSchemaConfig) {
+  initialize(roleSchemasObj: Record<string, IRoleSchema> = Config.global.roles) {
     const rbacConstructor = new RbacConstructor(roleSchemasObj);
     const { rootRole, roles, actions } = rbacConstructor.buildRoleTree();
 
@@ -97,9 +97,23 @@ class RbacController {
   /**
    * Check for user permission based on permission strategies.
    */
-  permitByStrategy(strategyName: TStrategyName, currentRole: Role | string, targetRole: Role | string): boolean;
-  permitByStrategy(strategyName: 'Restrict', currentRole: Role | string, targetRole: Role | string, options: IRestrictConfig): boolean;
-  permitByStrategy(strategyName: 'Allow', currentRole: Role | string, targetRole: Role | string, options: IAllowConfig): boolean;
+  permitByStrategy(
+    strategyName: TStrategyName,
+    currentRole: Role | string,
+    targetRole: Role | string
+  ): boolean;
+  permitByStrategy(
+    strategyName: 'Restrict',
+    currentRole: Role | string,
+    targetRole: Role | string,
+    options: IRestrictConfig
+  ): boolean;
+  permitByStrategy(
+    strategyName: 'Allow',
+    currentRole: Role | string,
+    targetRole: Role | string,
+    options: IAllowConfig
+  ): boolean;
   permitByStrategy(
     strategy: TStrategyName,
     currentRole: Role | string,
@@ -111,5 +125,3 @@ class RbacController {
     return this.permissionStrategies.getStrategy(strategy)(cRole, tRole, options as never);
   }
 }
-
-export default RbacController;

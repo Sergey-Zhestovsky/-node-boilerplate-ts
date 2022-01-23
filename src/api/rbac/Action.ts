@@ -1,6 +1,6 @@
 type TSynchronizePayload = { id: string } | string;
 
-class Action {
+export class Action {
   public id: string | null;
   public name: string;
 
@@ -18,5 +18,3 @@ class Action {
     else this.id = id;
   }
 }
-
-export default Action;

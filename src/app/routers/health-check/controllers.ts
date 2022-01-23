@@ -1,21 +1,25 @@
-import HealthService from '../../../services/HealthService';
-import logger from '../../../libs/Logger';
+import { Config } from '@/libs/config';
+import { Logger } from '@/libs/logger';
+import { HealthService } from '@/services/HealthService';
+
 import { HealthCheckDto, PingDto } from './dto';
 
-import env from '../../../data/env.json';
+export class HealthCheckController {
+  private readonly debug = Logger.getDebug('controller:health-check');
 
-const debug = logger.getDebug('controller:health-check');
+  constructor(private readonly healthService = new HealthService()) {}
 
-export const healthController = (healthCheckDto: HealthCheckDto) => {
-  debug(`Get in healthController with environment: '%s'`, healthCheckDto.withEnv);
-  if (process.env.NODE_ENV === env.PRODUCTION) healthCheckDto.withEnv = false;
-  const result = HealthService.getServerStatus(healthCheckDto.withEnv);
-  debug(`Get out healthController`);
-  return result;
-};
+  health(healthCheckDto: HealthCheckDto) {
+    this.debug(`Get in healthController with environment: '%s'`, healthCheckDto.withEnv);
+    if (Config.isProduction()) healthCheckDto.withEnv = false;
+    const result = this.healthService.getServerStatus(healthCheckDto.withEnv);
+    this.debug(`Get out healthController`);
+    return result;
+  }
 
-export const pingController = (pingDto: PingDto) => {
-  debug(`Get in pingController with time: '%s'`, pingDto.withTime);
-  if (pingDto.withTime) return { timeStamp: new Date() };
-  return 'pong';
-};
+  ping(pingDto: PingDto) {
+    this.debug(`Get in pingController with time: '%s'`, pingDto.withTime);
+    if (pingDto.withTime) return { timeStamp: new Date() };
+    return 'pong';
+  }
+}

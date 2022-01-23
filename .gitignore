@@ -7,9 +7,11 @@
 /build/
 /dist/
 /temp/
+/keys/
+/resources/
 
 # environment
-.env*.local
+/environment/.env*.local
 
 # Logs
 /logs/

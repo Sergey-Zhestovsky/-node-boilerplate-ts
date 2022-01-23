@@ -1,27 +1,25 @@
 import { Express } from 'express';
-import swaggerUi, { JsonObject } from 'swagger-ui-express';
+import swaggerUi from 'swagger-ui-express';
+import { OpenAPIV3 as OpenAPI } from 'openapi-types';
 
-import { Client404Error } from '../libs/ClientError';
-import swaggerConfig from '../config/swagger/swagger.config';
+import { Client404Error } from '@/libs/server-responses';
+import { Config } from '@/libs/config';
 
-const swaggerMiddleware = (
+export const swaggerMiddleware = (
   app: Express,
-  swagger: () => Promise<JsonObject | null>,
+  swagger: Promise<OpenAPI.Document | null>,
   urlPath: string = '/swagger'
 ) => {
-  if (!swaggerConfig.withSwagger) return;
+  if (!Config.global.swagger.withSwagger) return;
   app.use(urlPath, swaggerUi.serve);
-  const swaggerPromise = swagger();
 
   app.get(urlPath, async (req, res, next) => {
-    const swaggerAPI = await swaggerPromise;
+    const swaggerAPI = await swagger;
 
     if (swaggerAPI === null) {
       return next(new Client404Error());
     }
 
-    return swaggerUi.setup(swaggerAPI)(req, res, next);
+    return swaggerUi.setup(swaggerAPI, {})(req, res, next);
   });
 };
-
-export default swaggerMiddleware;

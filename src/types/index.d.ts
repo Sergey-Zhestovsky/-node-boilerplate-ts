@@ -1,19 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/naming-convention */
 
+type TypeofValues =
+  | 'string'
+  | 'number'
+  | 'bigint'
+  | 'boolean'
+  | 'symbol'
+  | 'undefined'
+  | 'object'
+  | 'function';
+
 type Writeable<T> = { -readonly [P in keyof T]: T[P] };
+
+type MaybePromise<T> = Promise<T> | T;
+
+type MaybeArray<T> = T[] | T;
+
+type Modify<T, R> = Omit<T, keyof R> & R;
+
+interface DeepObject<T> {
+  [key: string]: Array<DeepObject<T> | T> | DeepObject<T> | T;
+}
 
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: string;
   }
-
-  interface Process {
-    initialEnvironmentConfig: Record<string, string>;
-  }
 }
 
 declare namespace Express {
+  interface Request {
+    session: import('../api/auth/Session').Session;
+  }
+
   interface Response {
     return(val?: object | string | null, error?: object): void;
     throw(error?: object): void;

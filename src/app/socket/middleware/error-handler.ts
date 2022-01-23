@@ -1,11 +1,10 @@
 import events from 'events';
 import { Server, Socket } from 'socket.io';
 
-import { ClientError, Client401Error, Client500Error } from '../../../libs/ClientError';
-import { ClientRedirection } from '../../../libs/ClientRedirection';
-import ServerError from '../../../libs/ServerError';
-import logger from '../../../libs/Logger';
-import env from '../../../data/env.json';
+import { ClientError, Client401Error, Client500Error } from '@/libs/server-responses/ClientError';
+import { ClientRedirection, ServerError } from '@/libs/server-responses';
+import { HealthManager } from '@/libs/health-manager';
+import { Config } from '@/libs/config';
 
 events.captureRejections = true;
 
@@ -17,15 +16,17 @@ const handleError = (error: Error, socket: Socket) => {
   }
 
   if (error instanceof ClientRedirection) {
-    socket.emit('error', error.getRedirection());
+    socket.emit('redirect', error.getRedirection());
     socket.disconnect();
     return;
   }
 
-  const serverError = new ServerError(error);
-  logger.error(`Unhandled error: '${error.name}': '${error.message}'.\n${error.stack ?? ''}`);
+  const errMessage = `Unhandled error: '${error.name}': '${error.message}'.\n${error.stack ?? ''}`;
+  HealthManager.report(errMessage);
 
-  if (process.env.NODE_ENV === env.DEVELOPMENT) {
+  const serverError = new ServerError(error);
+
+  if (Config.isDevelopment()) {
     socket.emit('error', serverError.getError());
   } else {
     socket.emit('error', new Client500Error().getError());

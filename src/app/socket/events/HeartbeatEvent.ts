@@ -1,5 +1,5 @@
-import SocketEvent from '../../utils/socket/SocketEvent';
 import HeartbeatRoom from '../rooms/HeartbeatRoom';
+import SocketEvent from '../utils/SocketEvent';
 
 class HeartbeatEvent extends SocketEvent {
   get Name() {

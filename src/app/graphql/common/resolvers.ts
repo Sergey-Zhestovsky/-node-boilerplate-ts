@@ -13,7 +13,7 @@ export const Dictionary = new GraphQLScalarType<Record<string, unknown> | null, 
     if (ast.kind === Kind.STRING) {
       try {
         return JSON.parse(ast.value) as Record<string, unknown>;
-      } catch (error) {
+      } catch {
         return null;
       }
     }

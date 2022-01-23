@@ -1,6 +1,6 @@
-import Action from './Action';
-import Role from './Role';
-import logger from '../../libs/Logger';
+import { Logger } from '@/libs/logger';
+import { Action } from './Action';
+import { Role } from './Role';
 
 import { IRoleSchema } from './types';
 
@@ -10,10 +10,12 @@ interface IConstructedTree {
   actions: Action[];
 }
 
-class RbacConstructor {
+export class RbacConstructor {
+  private readonly logger: Logger;
   private readonly roleSchemasObj: Record<string, IRoleSchema>;
 
   constructor(roleSchemasObj: Record<string, IRoleSchema>) {
+    this.logger = new Logger('RBAC:Constructor');
     this.roleSchemasObj = roleSchemasObj;
   }
 
@@ -25,19 +27,19 @@ class RbacConstructor {
     const rolesGraph = new Map<IRoleSchema, IRoleSchema[]>();
     const actions = new Map<string, Action>();
 
-    roleSchemas.forEach((roleSchema) => {
-      if (rolesGraph.has(roleSchema)) return;
+    for (const roleSchema of roleSchemas) {
+      if (rolesGraph.has(roleSchema)) continue;
 
-      roleSchema.actions.forEach((action) => {
+      for (const action of roleSchema.actions) {
         if (!actions.has(action)) actions.set(action, new Action(null, action));
-      });
+      }
 
       const inheritance = roleSchema.inherits
         ?.map((descriptor) => roleSchemas.find((r) => r.descriptor === descriptor) ?? null)
         .filter<IRoleSchema>((v): v is IRoleSchema => v !== null);
 
       rolesGraph.set(roleSchema, inheritance ?? []);
-    });
+    }
 
     return { rolesGraph, actions };
   }
@@ -52,9 +54,9 @@ class RbacConstructor {
   ) {
     let tempForRoot = [...roleSchemas];
 
-    rolesGraph.forEach((val) => {
-      tempForRoot = tempForRoot.filter((tRoom) => !val.includes(tRoom));
-    });
+    for (const [, rg] of rolesGraph) {
+      tempForRoot = tempForRoot.filter((tRoom) => !rg.includes(tRoom));
+    }
 
     if (tempForRoot.length > 1) throw new Error('Role tree cannot be with more than one root');
     if (tempForRoot.length === 0) throw new Error('Role tree should have one root');
@@ -114,7 +116,7 @@ class RbacConstructor {
     const rootRole = walkToBuildRoles(startRole, metNodes);
 
     if (metNodes.length !== roleSchemas.length) {
-      logger.warn(
+      this.logger.warn(
         `Looks like role tree has unresolved nodes. Resolved: ${
           metNodes.length
         }, unresolved: ${Math.abs(metNodes.length - roleSchemas.length)}`
@@ -146,5 +148,3 @@ class RbacConstructor {
     };
   }
 }
-
-export default RbacConstructor;
