@@ -5,7 +5,7 @@ import { ENamespace, Localization } from '@/libs/localization';
 import { Client400Error } from '@/libs/server-responses';
 import { is } from '@/utils';
 
-type TRequestProperty = 'body' | 'query' | 'params';
+type TRequestProperty = 'body' | 'query' | 'params' | 'headers';
 
 const validate = (requestProperty: TRequestProperty, errorMessage = (error: string) => error) => {
   const validatorMiddleware = (
@@ -38,11 +38,13 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
         );
       }
 
-      if (isDto && replaceContent === undefined) {
-        const DtoSchema = schema;
-        req[requestProperty] = new DtoSchema(validationResult.value);
-      } else if (replaceContent) {
-        req[requestProperty] = validationResult.value;
+      if (requestProperty !== 'headers') {
+        if (isDto && replaceContent === undefined) {
+          const DtoSchema = schema;
+          req[requestProperty] = new DtoSchema(validationResult.value);
+        } else if (replaceContent) {
+          req[requestProperty] = validationResult.value;
+        }
       }
 
       return next();
@@ -56,3 +58,5 @@ const validate = (requestProperty: TRequestProperty, errorMessage = (error: stri
 
 export const validateBody = validate('body', (error) => `Bad body: ${error}`);
 export const validateQuery = validate('query', (error) => `Bad query: ${error}`);
+export const validateParams = validate('params', (error) => `Bad query: ${error}`);
+export const validateHeader = validate('headers', (error) => `Bad query: ${error}`);
