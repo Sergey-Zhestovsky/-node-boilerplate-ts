@@ -9,7 +9,7 @@ import { URL } from 'url';
 import { Validator, IExtendedValidator } from '@/libs/validator';
 import nodeEnv from '@/data/env.json';
 import { ELogLevel } from '@/libs/logger/types';
-import { TNodeEnv, TEnumNodeEnv } from './types';
+import { TNodeEnv, TEnumNodeEnv, TPreValidationHook } from './types';
 
 interface IBaseProcessEnv {
   NODE_ENV: string;
@@ -46,7 +46,7 @@ export const ENodeEnv = Object.fromEntries(
   Object.entries(nodeEnv).map(([key]) => [key, key])
 ) as TEnumNodeEnv;
 
-let envLoader: (forEnv?: TNodeEnv) => void;
+let loadEnvironment: (forEnv?: TNodeEnv, preValidationHook?: TPreValidationHook) => Environment;
 
 class Environment {
   static getValidationSchema(forNodeEnv: TNodeEnv, joi: IExtendedValidator) {
@@ -105,8 +105,12 @@ class Environment {
     dotenv.config({ path: getConfigFilePath('.env') });
   }
 
-  static getValidatedEnvironment<T extends IBaseProcessEnv = IProcessEnv>(forNodeEnv: TNodeEnv): T {
+  static getValidatedEnvironment<T extends IBaseProcessEnv = IProcessEnv>(
+    forNodeEnv: TNodeEnv,
+    preValidationHook?: TPreValidationHook
+  ): T {
     Environment.loadEnvFiles(forNodeEnv);
+    if (preValidationHook) preValidationHook();
 
     const validator = new Validator();
     validator.setSchema(Environment.getValidationSchema.bind(Environment, forNodeEnv));
@@ -132,7 +136,7 @@ class Environment {
 
   constructor() {
     this.nodeEnvName = this.setupNodeEnv();
-    envLoader = this.load.bind(this);
+    loadEnvironment = this.load.bind(this);
   }
 
   get nodeEnv() {
@@ -151,10 +155,11 @@ class Environment {
     return this.env;
   }
 
-  private load(forEnv = this.nodeEnvName) {
-    if (this.env) return;
-    this.env = Environment.getValidatedEnvironment(forEnv);
+  private load(forEnv = this.nodeEnvName, preValidationHook?: TPreValidationHook) {
+    if (this.env) return this;
+    this.env = Environment.getValidatedEnvironment(forEnv, preValidationHook);
     this.nodeEnvName = this.setupNodeEnv();
+    return this;
   }
 
   private setupNodeEnv() {
@@ -188,4 +193,4 @@ class Environment {
 }
 
 export const environment = new Environment();
-export { envLoader };
+export { loadEnvironment };

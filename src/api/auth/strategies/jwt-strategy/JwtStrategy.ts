@@ -61,15 +61,15 @@ class JWTStrategy extends Strategy {
     this.jwtVerifyOptions = this._verifOpts;
   }
 
-  private async authenticationDone(err: Error | null, user: unknown, info: number) {
-    if (err) return this.error(err);
-    else if (!user) return this.fail(info);
-    return this.success(user, info);
-  }
-
   async authenticate(req: Request, opt?: unknown) {
+    const verified: VerifiedCallback = (err, user, info) => {
+      if (err) return this.error(err);
+      else if (!user) return this.fail(info);
+      return this.success(user, info);
+    };
+
     const token = this.options.jwtFromRequest(req);
-    if (!token) return this.verify(req, null, this.authenticationDone);
+    if (!token) return this.verify(req, null, verified);
 
     let secretOrPublicKey: string;
     let decodedJwt: DecodedJwt<IJwtPayload>;
@@ -95,7 +95,7 @@ class JWTStrategy extends Strategy {
     }
 
     try {
-      this.verify(req, decodedJwt, this.authenticationDone);
+      this.verify(req, decodedJwt, verified);
     } catch (error) {
       this.error(error as Error);
     }

@@ -3,7 +3,7 @@
 import 'colors';
 
 import './setup-modules';
-import { envLoader, environment, ENodeEnv } from '@/libs/config/Environment';
+import { loadEnvironment, environment, ENodeEnv } from '@/libs/config/Environment';
 
 type TScript = (args: string[]) => Promise<string | void> | string | void;
 
@@ -29,7 +29,7 @@ const run = async (args: string[]) => {
     chosenEnv = ENodeEnv.DEVELOPMENT;
   }
 
-  envLoader(chosenEnv);
+  loadEnvironment(chosenEnv);
 
   let script;
 

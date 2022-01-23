@@ -19,7 +19,7 @@ const main = async () => {
 
   try {
     await Localization.init();
-    // await db.postgres.connect();
+    await db.postgres.connect();
     await rbac.synchronize();
 
     const server = http.createServer(app);
